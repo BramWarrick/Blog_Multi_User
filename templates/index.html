@@ -2,347 +2,341 @@
 
 {% block content %}
 
-      <div class="row">
-        <div class="col-md-12">
-          <hr class="hr-thick">
-        </div>
-      </div>
+<!-- Central art -->
+<div class="row">
+  <div class="col-md-12">
+    <img class="img-responsive center-block" src="./img/main_art_1000px.jpg" alt="Main window">
+  </div>
+</div>
 
-      <!-- Central art -->
-      <div class="row">
-        <div class="col-md-12">
-          <img class="img-responsive center-block" src="./img/main_art_1000px.jpg" alt="Main window">
-        </div>
-      </div>
+<!-- Begin Featured Work -->
+<div class="row">
+  <div class="col-md-12 text-muted">
+    <h2>
+      Featured Work
+    </h2>
+  </div>
+</div>
 
-      <!-- Begin Featured Work -->
-      <div class="row">
-        <div class="col-md-12 text-muted">
-          <h2>
-            Featured Work
-          </h2>
-        </div>
-      </div>
+<!-- First row of featured work: Fresh Tomatoes, Tournament and Quiz -->
+<div class="row text-center">
 
-      <!-- First row of featured work: Fresh Tomatoes, Tournament and Quiz -->
-      <div class="row text-center">
+  <!-- Fresh Tomatoes Project -->
+  <div class="col-md-4">
+    <img class="img-responsive"
+    src="./img/movie_db_200px.jpg"
+    sizes="100vw"
+    srcset="./img/movie_db_200px.jpg 200w,
+            ./img/movie_db_500px.jpg 500w,
+            ./img/movie_db_1000px.jpg 1000w"
+    alt="Snapshot of project - 'fresh tomatoes'"
+    data-toggle="modal" data-target="#fresh-tomatoes">
+    <h3 class="text-center">
+      Fresh Tomatoes
+    </h3>
+    <p>
+      <a href="https://github.com/BramWarrick/Movie_Database">
+        Link to project
+      </a>
+    </p>
+  </div>
 
-        <!-- Fresh Tomatoes Project -->
-        <div class="col-md-4">
-          <img class="img-responsive"
-          src="./img/movie_db_200px.jpg"
-          sizes="100vw"
-          srcset="./img/movie_db_200px.jpg 200w,
-                  ./img/movie_db_500px.jpg 500w,
-                  ./img/movie_db_1000px.jpg 1000w"
-          alt="Snapshot of project - 'fresh tomatoes'"
-          data-toggle="modal" data-target="#fresh-tomatoes">
-          <h3 class="text-center">
-            Fresh Tomatoes
-          </h3>
-          <p>
-            <a href="https://github.com/BramWarrick/Movie_Database">
-              Link to project
-            </a>
-          </p>
-        </div>
+  <!-- Tournament Project -->
+  <div class="col-md-4">
+    <img class="img-responsive"
+    src="./img/tournament_200px.jpg"
+    sizes="100vw"
+    srcset="./img/tournament_200px.jpg 200w,
+            ./img/tournament_500px.jpg 500w,
+            ./img/tournament_1000px.jpg 1000w"
+    alt="Soccerball on field"
+    data-toggle="modal" data-target="#tournament">
+    <h3>
+      Tournament - Swiss System
+    </h3>
+    <p>
+      <a href="https://github.com/BramWarrick/IPND-Stage-5-Tournament">
+        Link to project
+      </a>
+    </p>
+  </div>
 
-        <!-- Tournament Project -->
-        <div class="col-md-4">
-          <img class="img-responsive"
-          src="./img/tournament_200px.jpg"
-          sizes="100vw"
-          srcset="./img/tournament_200px.jpg 200w,
-                  ./img/tournament_500px.jpg 500w,
-                  ./img/tournament_1000px.jpg 1000w"
-          alt="Soccerball on field"
-          data-toggle="modal" data-target="#tournament">
-          <h3>
-            Tournament - Swiss System
-          </h3>
-          <p>
-            <a href="https://github.com/BramWarrick/IPND-Stage-5-Tournament">
-              Link to project
-            </a>
-          </p>
-        </div>
+  <!-- Quix Project -->
+  <div class="col-md-4">
+    <img class="img-responsive"
+    src="./img/quiz_200px.jpg"
+    sizes="100vw"
+    srcset="./img/quiz_200px.jpg 200w,
+            ./img/quiz_500px.jpg 500w,
+            ./img/quiz_1000px.jpg 1000w"
+    alt="Quiz image"
+    data-toggle="modal" data-target="#quiz">
+    <h3 class="text-center">
+      Quiz
+    </h3>
+    <p>
+      <a href="https://github.com/BramWarrick/Stage2-Python-Quiz">
+        Link to project
+      </a>
+    </p>
+  </div>
 
-        <!-- Quix Project -->
-        <div class="col-md-4">
-          <img class="img-responsive"
-          src="./img/quiz_200px.jpg"
-          sizes="100vw"
-          srcset="./img/quiz_200px.jpg 200w,
-                  ./img/quiz_500px.jpg 500w,
-                  ./img/quiz_1000px.jpg 1000w"
-          alt="Quiz image"
-          data-toggle="modal" data-target="#quiz">
-          <h3 class="text-center">
-            Quiz
-          </h3>
-          <p>
-            <a href="https://github.com/BramWarrick/Stage2-Python-Quiz">
-              Link to project
-            </a>
-          </p>
-        </div>
+</div>
 
-      </div>
+<!-- Second row: Profile (placeholder kept, expecting new additions soon) -->
+<div class="row text-center">
 
-      <!-- Second row: Profile (placeholder kept, expecting new additions soon) -->
-      <div class="row text-center">
-
-        <!-- This project, profiled here -->
-        <div class="col-md-4  col-md-offset-4">  <!-- change to 2 once placeholder is reactivated -->
-          <img class="img-responsive"
-          src="./img/profile_200px.jpg"
-          sizes="100vw"
-          srcset="./img/profile_200px.jpg 200w,
-                  ./img/profile_500px.jpg 500w,
-                  ./img/profile_1000px.jpg 1000w"
-          alt="Snapshot of project - webpage"
-          data-toggle="modal"
-          data-target="#profile">
-          <h3 class="text-center">
-            Profile
-          </h3>
-          <p>
-            <a href="https://github.com/BramWarrick/FSND-Profile-Page.git">
-              Link to project
-            </a>
-          </p>
-        </div>
+  <!-- This project, profiled here -->
+  <div class="col-md-4  col-md-offset-4">  <!-- change to 2 once placeholder is reactivated -->
+    <img class="img-responsive"
+    src="./img/profile_200px.jpg"
+    sizes="100vw"
+    srcset="./img/profile_200px.jpg 200w,
+            ./img/profile_500px.jpg 500w,
+            ./img/profile_1000px.jpg 1000w"
+    alt="Snapshot of project - webpage"
+    data-toggle="modal"
+    data-target="#profile">
+    <h3 class="text-center">
+      Profile
+    </h3>
+    <p>
+      <a href="https://github.com/BramWarrick/FSND-Profile-Page.git">
+        Link to project
+      </a>
+    </p>
+  </div>
 
 <!--         <div class="col-md-4 col-md-offset-2">
-          <img class="img-responsive" 
-          src="./img/placeholder_200px.jpg" 
-          srcset="./img/placeholder_200px.jpg 200w,
-                  ./img/placeholder_500px.jpg 500w,
-                  ./img/placeholder_1000px.jpg 1000w"
-          alt="More projects inbound!!">
-          <h3>Placeholder</h3>
-          <p><a href="https://github.com/BramWarrick/IPND-Stage-5-Tournament">Link to project</a></p>
-        </div> -->
+    <img class="img-responsive" 
+    src="./img/placeholder_200px.jpg" 
+    srcset="./img/placeholder_200px.jpg 200w,
+            ./img/placeholder_500px.jpg 500w,
+            ./img/placeholder_1000px.jpg 1000w"
+    alt="More projects inbound!!">
+    <h3>Placeholder</h3>
+    <p><a href="https://github.com/BramWarrick/IPND-Stage-5-Tournament">Link to project</a></p>
+  </div> -->
+</div>
+
+<!-- 
+Modal div below
+
+TODO:
+Add jQuery and JavaScript to use only one modal
+-->
+
+<!-- Fresh Tomatoes Modal -->
+<article class="modal fade" id="fresh-tomatoes" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="row">
+          <h4 class="col-md-12 modal-title">
+            Fresh Tomatoes
+          </h4>
+        </div>
+        <div class="row">
+          <p class="col-md-12 text-left">
+            Python Classes
+          </p>
+        </div>
       </div>
-
-      <!-- 
-      Modal div below
-
-      TODO:
-      Add jQuery and JavaScript to use only one modal
-      -->
-
-      <!-- Fresh Tomatoes Modal -->
-      <article class="modal fade" id="fresh-tomatoes" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="row">
-                <h4 class="col-md-12 modal-title">
-                  Fresh Tomatoes
-                </h4>
-              </div>
-              <div class="row">
-                <p class="col-md-12 text-left">
-                  Python Classes
-                </p>
-              </div>
-            </div>
-            <div class="modal-body">
-              <div CLASS="row">
-                <div class="col-md-12">
-                  <img class="img-responsive"
-                  src="./img/movie_db_200px.jpg"
-                  sizes="100vw"
-                  srcset="./img/movie_db_200px.jpg 200w,
-                          ./img/movie_db_500px.jpg 500w,
-                          ./img/movie_db_1000px.jpg 1000w"
-                  alt="Snapshot of project - 'fresh tomotoes'">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-10 col-md-offset-1 article-details">
-                  This is a project with a focus on Python Classes. 
-                  A movie class was created and individual movie's information was contained in an instantiation 
-                  of the class. Instances were then passed over to another fuction to build the HTML file.
-                  <br>
-                  <br>
-                  Run fresh_tomatoes.py to create the HTML file; it will open in the default browser.
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <div class="row">
-                <div class="col-md-2 col-md-offset-9">
-                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-              </div>
-            </div>
+      <div class="modal-body">
+        <div CLASS="row">
+          <div class="col-md-12">
+            <img class="img-responsive"
+            src="./img/movie_db_200px.jpg"
+            sizes="100vw"
+            srcset="./img/movie_db_200px.jpg 200w,
+                    ./img/movie_db_500px.jpg 500w,
+                    ./img/movie_db_1000px.jpg 1000w"
+            alt="Snapshot of project - 'fresh tomotoes'">
           </div>
         </div>
-      </article>
-
-      <!-- Tournament Modal-->
-      <article class="modal fade" id="tournament" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="row">
-                <h4 class="col-md-12 modal-title">
-                  Swiss Tournament
-                </h4>
-              </div>
-              <div class="row">
-                <p class="col-md-12 text-left">
-                  PostGreSQL and Python
-                </p>
-              </div>
-            </div>
-            <div class="modal-body">
-              <div CLASS="row">
-                <div class="col-md-12">
-                  <img class="img-responsive"
-                  src="./img/tournament_200px.jpg"
-                  sizes="100vw"
-                  srcset="./img/tournament_200px.jpg 200w,
-                          ./img/tournament_500px.jpg 500w,
-                          ./img/tournament_1000px.jpg 1000w"
-                  alt="Soccerball on field">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-10 col-md-offset-1 article-details">
-                  PostGreSQL project with fully normalized datastructure, keys and views. Using a .sql file, all 
-                  tables, keys and views were created, while the Python code allowed important code to be triggered.
-                  Tournament is Swiss-system, allowing all contestants to play in every round (byes excluded). Matches
-                  attempt to find the most equal opponent for every player. After the appropriate number of rounds, 
-                  a winner is found. Two players will not rematch within a tournament, even if their skills and 
-                  points would otherwise cause a pair.
-                  <br>
-                  <br>
-                  Run tournament.sql then tournament.py will yield results.
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <div class="row">
-                <div class="col-md-2 col-md-offset-9">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1 article-details">
+            This is a project with a focus on Python Classes. 
+            A movie class was created and individual movie's information was contained in an instantiation 
+            of the class. Instances were then passed over to another fuction to build the HTML file.
+            <br>
+            <br>
+            Run fresh_tomatoes.py to create the HTML file; it will open in the default browser.
           </div>
         </div>
-      </article>
-
-      <!-- Quiz Modal -->
-      <article class="modal fade" id="quiz" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="row">
-                <h4 class="col-md-12 modal-title">
-                  Quiz - Fill in the Blanks
-                </h4>
-              </div>
-              <div class="row">
-                <p class="col-md-12 text-left">
-                  Python - loops, strings, lists, dictionaries
-                </p>
-              </div>
-            </div>
-            <div class="modal-body">
-              <div CLASS="row">
-                <div class="col-md-12">
-                  <img class="img-responsive profile-image"
-                  src="./img/quiz_200px.jpg"
-                  sizes="100vw"
-                  srcset="./img/quiz_200px.jpg 200w,
-                          ./img/quiz_500px.jpg 500w,
-                          ./img/quiz_1000px.jpg 1000w"
-                  alt="Quiz image">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-10 col-md-offset-1 article-details">
-                  Project involved creating a quiz with multiple difficulty levels, user input and multiple attempts
-                  to answer correctly. I took the project further by adding color to the quiz entries and also by 
-                  allowing multiple answers for a question - one correct answer with a few alternative approved answers being 
-                  allowed. A prompt would inform the quiz-taker of the ideal answer, if it was not provided.
-                  <br>
-                  <br>
-                  Run fill-in-the-blanks.py to initiate the quiz. Demonstrates loops, strings, user input and mark up.
-              </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <div class="row">
-                <div class="col-md-2 col-md-offset-9">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col-md-2 col-md-offset-9">
+           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div>
-      </article>
+      </div>
+    </div>
+  </div>
+</article>
 
-      <!-- Profile Modal -->
-      <article class="modal fade" id="profile" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="row">
-                <h4 class="col-md-12 modal-title">
-                  Profile
-                </h4>
-              </div>
-              <div class="row">
-                <p class="col-md-12 text-left">
-                  HTML and CSS (with Bootstrap)
-                </p>
-              </div>
-            </div>
-            <div class="modal-body">
-              <div CLASS="row">
-                <div class="col-md-12">
-                  <img class="img-responsive"
-                  src="./img/profile_200px.jpg"
-                  sizes="100vw"
-                  srcset="./img/profile_200px.jpg 200w,
-                          ./img/profile_500px.jpg 500w,
-                          ./img/profile_1000px.jpg 1000w"
-                  alt="Snapshot of project - webpage">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-10 col-md-offset-1 article-details">
-                  Website showcasing all projects completed to date. Scope was primary concerned with HTML 
-                  and CSS with other frameworks mentioned. This website was framed with Bootstrap and subtle 
-                  tweaks were added in CSS.
-                  <br>
-                  <br>
-                  Focus on responsive design with a focus on device size, viewport size and bandwidth.
-                  <br>
-                  <br>
-                  Open index.htm with a web browser to see the project.
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <div class="row">
-                <div class="col-md-2 col-md-offset-9">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
+<!-- Tournament Modal-->
+<article class="modal fade" id="tournament" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="row">
+          <h4 class="col-md-12 modal-title">
+            Swiss Tournament
+          </h4>
+        </div>
+        <div class="row">
+          <p class="col-md-12 text-left">
+            PostGreSQL and Python
+          </p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div CLASS="row">
+          <div class="col-md-12">
+            <img class="img-responsive"
+            src="./img/tournament_200px.jpg"
+            sizes="100vw"
+            srcset="./img/tournament_200px.jpg 200w,
+                    ./img/tournament_500px.jpg 500w,
+                    ./img/tournament_1000px.jpg 1000w"
+            alt="Soccerball on field">
           </div>
         </div>
-      </article>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1 article-details">
+            PostGreSQL project with fully normalized datastructure, keys and views. Using a .sql file, all 
+            tables, keys and views were created, while the Python code allowed important code to be triggered.
+            Tournament is Swiss-system, allowing all contestants to play in every round (byes excluded). Matches
+            attempt to find the most equal opponent for every player. After the appropriate number of rounds, 
+            a winner is found. Two players will not rematch within a tournament, even if their skills and 
+            points would otherwise cause a pair.
+            <br>
+            <br>
+            Run tournament.sql then tournament.py will yield results.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col-md-2 col-md-offset-9">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- Quiz Modal -->
+<article class="modal fade" id="quiz" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="row">
+          <h4 class="col-md-12 modal-title">
+            Quiz - Fill in the Blanks
+          </h4>
+        </div>
+        <div class="row">
+          <p class="col-md-12 text-left">
+            Python - loops, strings, lists, dictionaries
+          </p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div CLASS="row">
+          <div class="col-md-12">
+            <img class="img-responsive profile-image"
+            src="./img/quiz_200px.jpg"
+            sizes="100vw"
+            srcset="./img/quiz_200px.jpg 200w,
+                    ./img/quiz_500px.jpg 500w,
+                    ./img/quiz_1000px.jpg 1000w"
+            alt="Quiz image">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1 article-details">
+            Project involved creating a quiz with multiple difficulty levels, user input and multiple attempts
+            to answer correctly. I took the project further by adding color to the quiz entries and also by 
+            allowing multiple answers for a question - one correct answer with a few alternative approved answers being 
+            allowed. A prompt would inform the quiz-taker of the ideal answer, if it was not provided.
+            <br>
+            <br>
+            Run fill-in-the-blanks.py to initiate the quiz. Demonstrates loops, strings, user input and mark up.
+        </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col-md-2 col-md-offset-9">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<!-- Profile Modal -->
+<article class="modal fade" id="profile" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="row">
+          <h4 class="col-md-12 modal-title">
+            Profile
+          </h4>
+        </div>
+        <div class="row">
+          <p class="col-md-12 text-left">
+            HTML and CSS (with Bootstrap)
+          </p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div CLASS="row">
+          <div class="col-md-12">
+            <img class="img-responsive"
+            src="./img/profile_200px.jpg"
+            sizes="100vw"
+            srcset="./img/profile_200px.jpg 200w,
+                    ./img/profile_500px.jpg 500w,
+                    ./img/profile_1000px.jpg 1000w"
+            alt="Snapshot of project - webpage">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1 article-details">
+            Website showcasing all projects completed to date. Scope was primary concerned with HTML 
+            and CSS with other frameworks mentioned. This website was framed with Bootstrap and subtle 
+            tweaks were added in CSS.
+            <br>
+            <br>
+            Focus on responsive design with a focus on device size, viewport size and bandwidth.
+            <br>
+            <br>
+            Open index.htm with a web browser to see the project.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col-md-2 col-md-offset-9">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
 
 {% endblock %}
