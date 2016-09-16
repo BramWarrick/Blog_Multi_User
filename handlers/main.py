@@ -222,7 +222,7 @@ class AsciiChanHandler(Handler):
 
 			self.redirect("/asciichan")
 		else:
-			error = "We need both a title and some artwork!"
+			error = "Please ensure you have both a title and artwork."
 			self.render_ascii(title = title,
 								art = art,
 								error = error)

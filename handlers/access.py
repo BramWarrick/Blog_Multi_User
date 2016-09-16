@@ -32,7 +32,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 class Users(db.Model):
 	username = db.StringProperty(required = True)
 	password = db.StringProperty(required = True)
-	email = db.EmailProperty(required = False)
+	email = db.EmailProperty()
 	created = db.DateTimeProperty(auto_now_add = True)
 	last_modified = db.DateTimeProperty(auto_now = True)
 
@@ -78,17 +78,11 @@ class SignUpHandler(Handler):
 		verify = self.request.get("verify")
 		email = self.request.get("email")
 		if check_submission(username, password, verify, email):
-			password_secured = make_pw_hash(username, password)
-			u = Users(username = username,
-			password = password_secured)
-			u.put
-
-			# Add cookies
-			# self.response.headers.add_header('Set-Cookie','visits=%s' % new_cookie_val)
+			# User passed all validations; add user and send cookies
+			password_secured = user_register(username, password, email)
 			self.response.headers['Content-Type'] = 'text/plain'
 			self.response.headers.add_header('Set-Cookie',str('u=%s' % username))
 			self.response.headers.add_header('Set-Cookie',str('p=%s' % password_secured))
-			# user_registered(username, password, email)
 			self.response.write('Welcome, ' + username + "!")
 		else:
 			self.render("minor_hw/sign-up.html", username_error = check_username(username),
@@ -99,17 +93,20 @@ class SignUpHandler(Handler):
 												email=email
 												)
 
-	# def user_registered(self, username, password, email):
-	# 	password_secured = make_pw_hash(username, password)
-	# 	u = Users(username = username,
-	# 				password = password_secured,
-	# 				email = email)
-	# 	u.put
-		
-	# 	# Add cookies
-	# 	self.response.headers['Content-Type'] = 'text/plain'
-	# 	self.response.headers.add_header('Set-Cookie','u=%s; path=/' % username)
-	# 	self.response.headers.add_header('Set-Cookie','p=%s; path=/' % password_secured)
+def user_register(username, password, email):
+	password_secured = make_pw_hash(username, password)
+	if email:
+		u = Users(username = username, password = password_secured, email = email)
+	else:
+		u = Users(username = username, password = password_secured)
+	u.put()
+	return password_secured
+
+def existsUsername(username):
+	q = Users.all()
+	q.filter("username = ", username)
+
+	return q.get()
 
 def check_submission(username, password, verify, email):
 	if check_username(username) == "" and check_password(password) == "" and check_verify(password, verify) == "" and check_email(email) == "":
@@ -119,29 +116,31 @@ def check_submission(username, password, verify, email):
 
 def check_username(username):
 	if not exists_username(username):
-		return "Username is a required field"
+		return "Username is a required field."
 	elif not valid_username(username):
-		return "That's not a valid username"
+		return "Username must be 3-20 characters, using letters and numbers."
+	elif existsUsername(username):
+		return "Username already in use."
 	else: 
 		return ""
 
 def check_password(password):
 	if not exists_password(password):
-		return  "Password is a required field"
+		return  "Password is a required field."
 	elif not valid_password(password):
-		return "That is not a valid password"
+		return "That is not a valid password."
 	else:
 		return ""
 
 def check_verify(password, verify):
 	if password and not matches_password(password, verify):
-		return "Your passwords didn't match"
+		return "Your passwords didn't match."
 	else:
 		return ""
 
 def check_email(email):
 	if email and not valid_email(email):
-		return "That is not a valid email"
+		return "That is not a valid email."
 	else:
 		return ""
 
