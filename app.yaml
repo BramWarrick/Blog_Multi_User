@@ -9,6 +9,18 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
+- url: /sign-up
+  script: handlers.sign-up.app
+
+- url: /rot13
+  script: handlers.rot13.app
+
+- url: /blog*
+  script: handlers.blog.app
+
+- url: /ascii
+  script: handlers.ascii_art.app
+
 - url: /
   script: main.app
 
@@ -18,9 +30,9 @@ handlers:
 - url: /css
   static_dir: css
 
-- url: /(.*\.(gif|png|jpg|svg))$
+- url: /(.*\.(gif|png|jpg|svg|jpeg))$
   static_files: static/\1
-  upload: static/.*\.(gif|png|jpg|svg)$
+  upload: static/.*\.(gif|png|jpg|svg|jpeg)$
 
 - url: .*
   script: main.app

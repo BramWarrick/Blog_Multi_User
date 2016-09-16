@@ -1,60 +1,65 @@
 {% extends "./base.html" %}
 
 {% block content %}
+  <div class="row">
+    <h2 class="col-md-4 col-md-offset-3">Signup</h2>
+  </div>
 
-    <h2>Signup</h2>
+  <br>
+  
     <form method="post">
-      <table>
-        <tr>
-          <td class="label">
-            Username
-          </td>
-          <td>
-            <input type="text" name="username" value="{{ username }}">
-          </td>
-          <td class="error">
-            {{ username_error }}
-          </td>
-        </tr>
 
-        <tr>
-          <td class="label">
-            Password
-          </td>
-          <td>
-            <input type="password" name="password" value="{{ password }}">
-          </td>
-          <td class="error">
-            {{ password_error }}
-          </td>
-        </tr>
+      <div class="row">
+        <div class="label col-md-2 col-md-offset-3">
+          Username
+        </div>
+        <input class="col-md-4" type="text" name="username" value="{{ username }}" placeholder="Username">
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-5 text-danger">
+          <strong>{{ username_error }}</strong>
+        </div>
+      </div>
 
-        <tr>
-          <td class="label">
-            Verify Password
-          </td>
-          <td>
-            <input type="password" name="verify" value="{{ verify }}">
-          </td>
-          <td class="error">
-            {{ verify_error }}
-          </td>
-        </tr>
+      <div class="row">
+        <div class="label col-md-2 col-md-offset-3">
+          Password
+        </div>
+        <input class="col-md-4" type="password" name="password" value="{{ password }}" placeholder="Password">
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-5 text-danger">
+          <strong>{{ password_error }}</strong>
+        </div>
+      </div>
 
-        <tr>
-          <td class="label">
-            Email (optional)
-          </td>
-          <td>
-            <input type="text" name="email" value="{{ email }}">
-          </td>
-          <td class="error">
-            {{ email_error }}
-          </td>
-        </tr>
-      </table>
+      <div class="row">
+        <div class="label col-md-2 col-md-offset-3">
+          Verify Password
+        </div>
+        <input class="col-md-4" type="password" name="verify" value="{{ verify }}" placeholder="Verification">
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-5 text-danger">
+          <strong>{{ verify_error }}</strong>
+        </div>
+      </div>
 
-      <input type="submit">
+      <div class="row">
+        <div class="label col-md-2 col-md-offset-3">
+          Email (optional)
+        </div>
+        <input class="col-md-4" type="text" name="email" value="{{ email }}" placeholder="Email (Optional)">
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-5 text-danger">
+          <strong>{{ email_error }}</strong>
+        </div>
+
+      <div class="row">
+        <input class="col-md-1 col-md-offset-7" type="submit">
+      </div>
+
     </form>
  
  {% endblock %}
