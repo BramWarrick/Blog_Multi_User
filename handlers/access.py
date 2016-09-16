@@ -18,11 +18,12 @@ import os
 import webapp2
 import jinja2
 import re
+import random
+import string
 import hashlib
 import hmac
 
 from google.appengine.ext import db
-from google.appengine.ext import ndb
 
 template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
@@ -68,37 +69,47 @@ class MainHandler(Handler):
 
 # Sign up logic
 class SignUpHandler(Handler):
-    def get(self):
-        self.render("minor_hw/sign-up.html")
-        
-    def post(self):
-    	username = self.request.get("username")
-    	password = self.request.get("password")
-    	verify = self.request.get("verify")
-    	email = self.request.get("email")
-    	if check_submission(username, password, verify, email):
-    		user_registered(username, password, email)
-    		self.response.write('Welcome, ' + username + "!")
-    	else:
-	    	self.render("minor_hw/sign-up.html", username_error = check_username(username),
-	    								password_error = check_password(password),
-	    								verify_error = check_verify(password, verify),
-	    								email_error = check_email(email),
-	    								username = username,
-	    								email=email
-	    								)
+	def get(self):
+		self.render("minor_hw/sign-up.html")
 
-def user_registered(self, username, password, email):
-	password_secured = make_pw_hash(username, password)
-	u = Users(username = username,
-				password = password_secured,
-				email = email)
-	u.put
-	
-	# Add cookies
-	self.response.headers['Content-Type'] = 'text/plain'
-	self.response.headers.add_header('Set-Cookie','u=%s; path=/' % username)
-	self.response.headers.add_header('Set-Cookie','p=%s; path=/' % password_secured)
+	def post(self):
+		username = self.request.get("username")
+		password = self.request.get("password")
+		verify = self.request.get("verify")
+		email = self.request.get("email")
+		if check_submission(username, password, verify, email):
+			password_secured = make_pw_hash(username, password)
+			u = Users(username = username,
+			password = password_secured)
+			u.put
+
+			# Add cookies
+			# self.response.headers.add_header('Set-Cookie','visits=%s' % new_cookie_val)
+			self.response.headers['Content-Type'] = 'text/plain'
+			self.response.headers.add_header('Set-Cookie',str('u=%s' % username))
+			self.response.headers.add_header('Set-Cookie',str('p=%s' % password_secured))
+			# user_registered(username, password, email)
+			self.response.write('Welcome, ' + username + "!")
+		else:
+			self.render("minor_hw/sign-up.html", username_error = check_username(username),
+												password_error = check_password(password),
+												verify_error = check_verify(password, verify),
+												email_error = check_email(email),
+												username = username,
+												email=email
+												)
+
+	# def user_registered(self, username, password, email):
+	# 	password_secured = make_pw_hash(username, password)
+	# 	u = Users(username = username,
+	# 				password = password_secured,
+	# 				email = email)
+	# 	u.put
+		
+	# 	# Add cookies
+	# 	self.response.headers['Content-Type'] = 'text/plain'
+	# 	self.response.headers.add_header('Set-Cookie','u=%s; path=/' % username)
+	# 	self.response.headers.add_header('Set-Cookie','p=%s; path=/' % password_secured)
 
 def check_submission(username, password, verify, email):
 	if check_username(username) == "" and check_password(password) == "" and check_verify(password, verify) == "" and check_email(email) == "":
