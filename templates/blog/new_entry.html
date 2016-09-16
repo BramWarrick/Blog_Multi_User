@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!-- saved from url=(0097)https://storage.googleapis.com/supplemental_media/udacityu/2730818600/bootstrap-prestructure.html -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      My Profile
+    </title>
+    <link rel="stylesheet" href="./../css/bootstrap.min.css">
+    <link rel="stylesheet" href="./../css/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400" rel="stylesheet">
+  </head>
+
+  <body>
+  
+    <div class="container">
+
+      <header>
+
+        <!-- Udacity logo, name, caption -->
+        <div class="row">
+          <div class="col-md-1">
+            <img class="img-responsive title-logo" src="./../img/udacity.svg" alt="Udacity logo">
+          </div>
+          <div class="col-md-5s col-md-offset-6 text-right text-uppercase">
+            <h1 class="text-thin title-super">
+              Bram Warrick
+            </h1>
+            <h4>
+              Full Stack - Aspiring Junior Dev
+            </h4>
+          </div>
+        </div>
+
+      </header>
+
+      <div class="row">
+        <div class="col-md-12">
+          <hr class="hr-thick">
+        </div>
+      </div>
+
+      <!-- Begin Featured Work -->
+
+      <form method="post">
+        <label class="row">
+          <div class="col-md-10 col-md-offset-1">Subject</div>
+          <div class="row">
+            <input class="col-md-10 col-md-offset-1" type="text" name="subject" value="{{ subject }}">
+          </div>
+        </label>
+
+        <label class="row">
+          <div class="col-md-10 col-md-offset-1">Content</div>
+          <div class="row">
+            <textarea class="col-md-10 col-md-offset-1" rows="10" name="content">{{ content }}</textarea>
+          </div>
+        </label>
+
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1 error">
+            {{ error }}
+          </div>
+        </div>
+
+        <div class="row">
+          <input type="submit" class="col-md-10 col-md-offset-1">
+        </div>
+
+      </form>
+
+      <!-- Social Section -->
+      <footer class="row">
+        <a class="zocial-googleplus col-md-2 col-md-offset-4" href="https://plus.google.com/+BramWarrick"></a>
+        <a class="zocial-linkedin col-md-2" href="https://www.linkedin.com/in/bram-warrick-69930212"></a>
+      </footer>
+    </div>
+
+    <script src="js/jquery-3.1.0.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+  </body>
+
+</html>
