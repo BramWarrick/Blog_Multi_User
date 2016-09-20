@@ -28,6 +28,11 @@ template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'template
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 								autoescape = True)
 
+# class RelEnvironment(jinja2.Environment):
+# 	"""Override join_path() to enable relative template paths."""
+# 	def join_path(self, template, parent):
+# 		return os.path.join(os.path.dirname(parent), templates)
+
 # Security helper functions
 def hash_str(s):
 	return hmac.new('89frheojco;d94&', s, hashlib.sha1).hexdigest()
@@ -47,12 +52,12 @@ class Handler(webapp2.RequestHandler):
 	def write(self, *a, **kw):
 		self.response.out.write(*a, **kw)
 
-	def render_str(self, template, **params):
+	def render_string(self, template, **params):
 		t = jinja_env.get_template(template)
 		return t.render(params)
 
 	def render(self, template, **kw):
-		self.write(self.render_str(template, **kw))
+		self.write(self.render_string(template, **kw))
 
 	def set_secure_cookie(self, name, val):
 		cookie_val = make_secure_val(val)
@@ -83,68 +88,80 @@ def render_str(template, **params):
 	t = jinja_env.get_template(template)
 	return t.render(params)
 
-class BlogHandler(Handler):
-	def render_blog(self, blog="", error=""):
+class UserBlogHandler(Handler):
+	def get(self, username, error=""):
 		entries = db.GqlQuery("SELECT * FROM Entries "
-							 "ORDER BY created DESC "
+							"WHERE user_id = '%s' "
+							"ORDER BY created DESC " % Users.by_name(username).key().id()
 							)
 		self.render("/blog/blog.html", entries = entries, error=error)
 
-	def get(self):
-		self.render_blog()
+class SingleEntryHandler(Handler):
+	def get(self, entry_id):
+		User = Users.by_hash(self.read_secure_cookie('user_id'))
+		if User:
+			key = db.Key.from_path('Entries', int(entry_id))
+			entry = db.get(key)
 
-class SingleEntry(Handler):
-	def get(self, username, post_id):
-		# self.response.write('Hello World!')
-		self.response.write(username + " " + post_id)
+			if not entry:
+				self.error(404)
+				return
+			a = Users.by_id(int(entry.user_id))
 
-		# key = db.Key.from_path('Entries', int(post_id))
-		# entry = db.get(key)
-
-		# if not entry:
-		# 	self.error(404)
-		# 	return
-
-		# self.render("SingleEntry.html", entry = entry)
+			self.render("/blog/single_entry.html", entry = entry, author = a.username, user = User)
 
 class BlogNewPostHandler(Handler):
-	def render_newpost(self, blog="", error=""):
-		self.render("/blog/new_entry.html", subject = "", content = "", error = "")
+	def render_newpost(self, user, error=""):
+		self.render("/blog/new_entry.html", user = user, author = user.username, subject = "", content = "", error = "")
 
 	def get(self):
-		# self.response.write('Hello world!')
-		self.render_newpost()
+		User = Users.by_hash(self.read_secure_cookie('user_id'))
+		if User:
+			self.render_newpost(user = User)
+		else:
+			self.redirect('/blog/registration')
 
 	def post(self):
 		subject = self.request.get("subject")
 		content = self.request.get("content")
 
-		if subject and content:
-			e = Entries(subject = subject, content = content)
-			e.put()
+		User = Users.by_hash(self.read_secure_cookie('user_id'))
+		if User:
+			user_id = str(User.key().id())
+			if subject and content:
+				e = Entries(subject = subject, content = content, user_id = user_id)
+				e.put()
 
-			self.redirect('/blog/%s' % str(e.key().id()))
+				self.redirect('/blog/entry/%s' % str(e.key().id()))
+			else:
+				error = "Please provide both a subject and some content"
+				self.render_newpost(subject = subject,
+								content = content,
+								error = error)
 		else:
-			error = "Please provide both a subject and some content"
-			self.render_newpost(subject = subject,
-							content = content,
-							error = error)
+			self.redirect('/blog/registration')
 
-class Entries(db.Model):
-	subject = db.StringProperty(required = True)
-	content = db.TextProperty(required = True)
-	created = db.DateTimeProperty(auto_now_add = True)
-	last_modified = db.DateTimeProperty(auto_now = True)
+class WelcomeHandler(Handler):
+	def get(self):
+		User = Users.by_hash(self.read_secure_cookie('user_id'))
+		if User:
+			self.render('/blog/welcome.html', username = User.username)
+		else:
+			self.redirect('/blog/registration')
+		# PageValidation('/blog/welcome.html' ,'/blog/registration' , self.read_secure_cookie('user_id'))
 
-	def render(self):
-		self._render_text = self.content.replace('\n', '<br>')
-		return render_str("/blog/entry.html", entry = self)
+# def PageValidation(page_intended, page_redirect, user_hash = None):
+# 	User = Users.by_hash(user_hash)
+# 	if User:
+# 		self.render(page_intended, username = User.username)
+# 	else:
+# 		self.redirect(page_redirect)
 
-app = webapp2.WSGIApplication([(r'/blog/([0-9]+)/([0-9]+)', SingleEntry),
-								(r'/blog/([0-9]+)', SingleEntry),
-								# (r'/blog/([a-f0-9]+)', SingleEntry),
-								(r'/blog/([a-zA-Z0-9_-]+)/([0-9]+)', SingleEntry),
+app = webapp2.WSGIApplication([
+								(r'/blog/([a-zA-Z0-9_-]+)/all', UserBlogHandler),
+								(r'/blog/entry/([0-9]+)', SingleEntryHandler),
 								('/blog/newpost', BlogNewPostHandler),
-								('/blog',BlogHandler)
+								('/blog/welcome', WelcomeHandler),
+								('/blog',WelcomeHandler),
 								],
 								debug=True)

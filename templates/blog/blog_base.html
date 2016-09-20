@@ -1,0 +1,50 @@
+{% include "/blog/base_layout_blog.html" %}
+
+  <div class="container">
+
+    <header>
+      <div class="row">
+        <div class="col-sm-3 col-sm-offset-8 text-right login-area">
+          {% if user %}
+            {{user.username}} (<a class="login-link" href="/blog/logout">logout</a>)
+          {% else %}
+            <a class="login-link" href="/blog/login">login</a>
+            |
+            <a class="login-link" href="/blog/register">register</a>
+          {% endif %}
+        </div>
+      </div>
+      <!-- Udacity logo, name, caption -->
+      <div class="row">
+        <div class="col-md-1">
+          <img class="img-responsive title-logo" src="/img/udacity.svg" alt="Udacity logo">
+        </div>
+        <div class="col-md-5s col-md-offset-6 text-right text-uppercase">
+          <h1 class="text-thin title-super">
+            {{ author }}
+          </h1>
+          <h4>
+            {{ signature }}
+          </h4>
+        </div>
+      </div>
+
+    </header>
+
+    <div class="row">
+      <div class="col-md-12">
+        <hr class="hr-thick">
+      </div>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Social Section -->
+<!--       <footer class="row">
+      <a class="zocial-googleplus col-md-2 col-md-offset-4" href="https://plus.google.com/+BramWarrick"></a>
+      <a class="zocial-linkedin col-md-2" href="https://www.linkedin.com/in/bram-warrick-69930212"></a>
+    </footer> -->
+  </div>
+
+{% include "/blog/base_footer_blog.html" %}

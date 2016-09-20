@@ -1,3 +1,7 @@
+{% extends "/blog/blog_base.html" %}
+
+{% block content %}
+
   <!-- Begin Blog entry -->
   <article>
     <div class="row">
@@ -16,7 +20,7 @@
     <!-- Blog content with <br> replaced in for line breaks-->
     <div class="row text-center">
       <p class="col-md-10 col-md-offset-1 text-left lead">
-        {{ entry._render_text| safe }}
+        {{ entry.content | safe }}
       </p>
     </div>
   </article>
@@ -26,3 +30,7 @@
       <hr class="hr">
     </div>
   </div>
+
+{% endblock %}
+
+

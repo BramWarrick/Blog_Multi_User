@@ -1,8 +1,14 @@
+import os
+import jinja2
 import random
 import hashlib
 import hmac
 
 from google.appengine.ext import db
+
+template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'templates')
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
+								autoescape = True)
 
 # "Tables" - In GAE, these are Classes
 def user_key(group = 'default'):
@@ -11,7 +17,7 @@ def user_key(group = 'default'):
 class Users(db.Model):
 	username = db.StringProperty(required = True)
 	password_hash = db.StringProperty(required = True)
-	# tagline = db.StringProperty()   Under consideration
+	signature = db.StringProperty()   # Under consideration
 	email = db.EmailProperty(required = False)
 	created = db.DateTimeProperty(auto_now_add = True)
 	last_modified = db.DateTimeProperty(auto_now = True)
@@ -24,6 +30,13 @@ class Users(db.Model):
 	def by_name(cls, name):
 		u = cls.all().filter('username =', name).get()
 		return u
+
+	@classmethod
+	def by_hash(cls, hash):
+		if hash:
+			uid = hash.split('|')[0]
+			uid = int(uid)
+			return cls.get_by_id(uid, parent = user_key())
 
 	@classmethod
 	def register(cls, name, password, email):
@@ -71,7 +84,16 @@ class Entries(db.Model):
 
 	def render(self):
 		self._render_text = self.content.replace('\n', '<br>')
-		return render_str("entry.html", p = self)
+		return render_str("/blog/entry.html", entry = self)
+
+def render_str(template, **params):
+	t = jinja_env.get_template(template)
+	return t.render(params)
+
+class Entry_Likes(db.Model):
+	entry_id = db.TextProperty(required = True)
+	user_id = db.StringProperty(required = True)
+	created = db.DateTimeProperty(auto_now_add = True)
 
 class Comments(db.Model):
 	entry_id = db.TextProperty(required = True)
@@ -80,3 +102,8 @@ class Comments(db.Model):
 	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 	last_modified = db.DateTimeProperty(auto_now = True)
+
+class Comment_Likes(db.Model):
+	comment_id = db.TextProperty(required = True)
+	user_id = db.StringProperty(required = True)
+	created = db.DateTimeProperty(auto_now_add = True)

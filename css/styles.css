@@ -59,3 +59,9 @@ footer {
 	font-weight: 300;
 	padding: 1em;
 }
+
+.header-date {
+    display: inline-block;
+    vertical-align: bottom;
+    float: none;
+}

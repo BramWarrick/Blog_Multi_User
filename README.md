@@ -2,3 +2,4 @@ Adding progress so far for ascii art page from homework. About to add Google App
 Users are written to db, and verifications pass
 Removed large images from repo
 Removed hr (rule) from index.html; reinstated index.html as landing page
+# Added most log-in/out functionality
