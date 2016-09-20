@@ -6,7 +6,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#	 http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -63,166 +63,21 @@ class Handler(webapp2.RequestHandler):
 		self.write(self.render_str(template, **kw))
 
 # class BoilerPlateHandler(Handler):
-#     def get(self):
-#         self.response.write('Hello world!')
+#	 def get(self):
+#		 self.response.write('Hello world!')
 
 class MainHandler(Handler):
 	def get(self):
 		self.render("index.html")
 
-class Rot13Handler(Handler):
-	def get(self):
-		self.render("minor_hw/rot13.html")
-
-	def post(self):
-		output = self.request.get("text")
-		output = rot13(output)
-		self.render("minor_hw/rot13.html", rot13 = output)
-
-# ROT13 logic
-def rot13(string):
-	output = ""
-	for index in range (0, len(string)):
-		output += new_rot_value(string[index])
-	return output
-
-def new_rot_value(string):
-	if string.isalpha() or string.isdigit():
-		return rotOffset(string)
-	else:
-		return string
-
-def rotOffset(string):
-	if string.isdigit():
-		return getRotValue(string, 48, 57, 5)
-	elif string.islower():
-		return getRotValue(string, 97, 122, 13)
-	else:
-		return getRotValue(string, 65, 90, 13)
-	return
-
-def getRotValue(string, min_ord, max_ord, increment):
-	val = ord(string) + increment
-	offset = max_ord - min_ord + 1
-	if val > max_ord:
-		val -= offset
-	return chr(val)
-
-# Sign up logic
-class SignUpHandler(Handler):
-    def get(self):
-        self.render("minor_hw/sign-up.html")
-        
-    def post(self):
-    	username = self.request.get("username")
-    	password = self.request.get("password")
-    	verify = self.request.get("verify")
-    	email = self.request.get("email")
-    	if check_submission(username, password, verify, email):
-    		self.response.write('Welcome, ' + username + "!")
-    	else:
-	    	self.render("minor_hw/sign-up.html", username_error = check_username(username),
-	    								password_error = check_password(password),
-	    								verify_error = check_verify(password, verify),
-	    								email_error = check_email(email),
-	    								username = username,
-	    								email=email
-	    								)
-
-def check_submission(username, password, verify, email):
-	if check_username(username) == "" and check_password(password) == "" and check_verify(password, verify) == "" and check_email(email) == "":
-		return True
-	else:
-		return False
-
-def check_username(username):
-	if not exists_username(username):
-		return "Username is a required field"
-	elif not valid_username(username):
-		return "That's not a valid username"
-	else: 
-		return ""
-
-def check_password(password):
-	if not exists_password(password):
-		return  "Password is a required field"
-	elif not valid_password(password):
-		return "That is not a valid password"
-	else:
-		return ""
-
-def check_verify(password, verify):
-	if password and not matches_password(password, verify):
-		return "Your passwords didn't match"
-	else:
-		return ""
-
-def check_email(email):
-	if email and not valid_email(email):
-		return "That is not a valid email"
-	else:
-		return ""
-
-def exists_username(username):
-	return len(username) > 0
-
-def exists_password(password):
-	return len(password) > 0
-
-def matches_password(password, verify):
-	return password == verify
-
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
-PASSWORD_RE=re.compile(r"^.{3,20}$")
-EMAIL_RE=re.compile(r"^[\S]+@[\S]+.[\S]+$")
-
-def valid_username(username):
-    return USER_RE.match(username)
-
-def valid_password(password):
-	return PASSWORD_RE.match(password)
-
-def valid_email(email):
-    return EMAIL_RE.match(email)
-
-# Ascii related logic
-class AsciiChanHandler(Handler):
-	def render_ascii(self, title="", art="", error=""):
-		arts = db.GqlQuery("SELECT * FROM Art "
-							"ORDER BY created DESC ")
-		self.render("minor_hw/asciichan.html", title=title, art=art, error=error, arts = arts)
-
-	def get(self):
-		# self.response.write('Hello world!')
-		self.render_ascii()
-
-	def post(self):
-		title = self.request.get("title")
-		art = self.request.get("art")
-
-		if title and art:
-			a = Art(title = title, art = art)
-			a.put()
-
-			self.redirect("/asciichan")
-		else:
-			error = "Please ensure you have both a title and artwork."
-			self.render_ascii(title = title,
-								art = art,
-								error = error)
-
-class Art(db.Model):
-	title = db.StringProperty(required = True)
-	art = db.TextProperty(required = True)
-	created = db.DateTimeProperty(auto_now_add = True)
 
 # Blog related logic
 def blog_key(name = 'default'):
-    return db.Key.from_path('blogs', name)
+	return db.Key.from_path('blogs', name)
 
 def render_str(template, **params):
-    t = jinja_env.get_template(template)
-    return t.render(params)
+	t = jinja_env.get_template(template)
+	return t.render(params)
 
 class BlogHandler(Handler):
 	def render_blog(self, blog="", error=""):
@@ -235,15 +90,15 @@ class BlogHandler(Handler):
 		self.render_blog()
 
 class SingleEntry(Handler):
-    def get(self, post_id):
-        key = db.Key.from_path('Entries', int(post_id))
-        entry = db.get(key)
+	def get(self, post_id):
+		key = db.Key.from_path('Entries', int(post_id))
+		entry = db.get(key)
 
-        if not entry:
-            self.error(404)
-            return
+		if not entry:
+			self.error(404)
+			return
 
-        self.render("SingleEntry.html", entry = entry)
+		self.render("SingleEntry.html", entry = entry)
 
 class BlogNewPostHandler(Handler):
 	def render_newpost(self, blog="", error=""):
@@ -279,14 +134,11 @@ class Entries(db.Model):
 		return render_str("/blog/entry.html", entry = self)
 
 app = webapp2.WSGIApplication([('/', MainHandler),
-								# ('/rot13', Rot13Handler),
-								# ('/sign-up', SignUpHandler),
-								# ('/asciichan', AsciiChanHandler),
-								# ('/blog',BlogHandler),
-								# ('/blog/([0-9]+)', SingleEntry),
-								# ('/blog/newpost', BlogNewPostHandler)
 								],
 								debug=True)
+
+def main():
+    util.run_wsgi_app(application)
 
 # Reference Material -> Will strip for parts later
 		# self.response.headers['Content-Type'] = 'text/plain'

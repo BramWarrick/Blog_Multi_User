@@ -10,22 +10,37 @@ handlers:
   upload: favicon\.ico
 
 - url: /sign-up
-  script: handlers.sign-up.app
+  script: handlers.access.app
+
+- url: /blog/sign-up
+  script: handlers.access.app
+
+- url: /blog/registration
+  script: handlers.access.app
+
+- url: /blog/login
+  script: handlers.access.app
+
+- url: /blog/.*/.*
+  script: handlers.blog.app
+
+- url: /blog/.*
+  script: handlers.blog.app
+
+- url: /blog
+  script: handlers.blog.app
 
 - url: /rot13
   script: handlers.rot13.app
-
-- url: /blog*
-  script: handlers.blog.app
 
 - url: /ascii
   script: handlers.ascii_art.app
 
 - url: /
-  script: main.app
+  script: handlers.main.app
 
 - url: /index\.html
-  script: main.app
+  script: handlers.main.app
 
 - url: /css
   static_dir: css
@@ -35,7 +50,7 @@ handlers:
   upload: static/.*\.(gif|png|jpg|svg|jpeg)$
 
 - url: .*
-  script: main.app
+  script: handlers.main.app
 
 libraries:
 - name: webapp2
@@ -43,4 +58,3 @@ libraries:
 
 - name: jinja2
   version: latest
-
