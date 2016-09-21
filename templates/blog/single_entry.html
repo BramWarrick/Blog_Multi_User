@@ -2,34 +2,7 @@
 
 {% block content %}
 
-  <!-- Begin Blog entry -->
-  <article>
-    <div class="row">
-      <div class="col-md-10">
-        <h3>
-          {{ entry.subject }}
-        </h3>
-      </div>
-      <div class="col-md-2 header-date">
-        <small>
-          Created: {{  entry.created.strftime("%b %d, %Y")  }}
-        </small>
-      </div>
-    </div>
-
-    <!-- Blog content with <br> replaced in for line breaks-->
-    <div class="row text-center">
-      <p class="col-md-10 col-md-offset-1 text-left lead">
-        {{ entry.content | safe }}
-      </p>
-    </div>
-  </article>
-
-  <div class="row">
-    <div class="col-md-12">
-      <hr class="hr">
-    </div>
-  </div>
+{% include "/blog/entry.html" %}
 
 {% endblock %}
 

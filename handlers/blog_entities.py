@@ -40,7 +40,7 @@ class Users(db.Model):
 
 	@classmethod
 	def register(cls, name, password, email):
-		pw_hash = createPasswordHash(name, password)
+		pw_hash = create_password_hash(name, password)
 		if email:
 			return cls(parent = user_key(),
 						username = name,
@@ -54,25 +54,25 @@ class Users(db.Model):
 	@classmethod
 	def login(cls, name, pw):
 		u = cls.by_name(name)
-		if u and isValidLogin(name, pw, u.password_hash):
+		if u and is_valid_login(name, pw, u.password_hash):
 			return u
 
 
 # Users class helper functions
-def isValidLogin(name, pw, h):
+def is_valid_login(name, pw, h):
 	salt = h.split('|')[1]
-	if h == createPasswordHash(name, pw, salt):
+	if h == create_password_hash(name, pw, salt):
 		return True
 	else:
 		return False
 
-def createPasswordHash(name, pw, salt=None):
+def create_password_hash(name, pw, salt=None):
 	if not salt:
-		salt = createSalt()
+		salt = create_salt()
 	h = hashlib.sha256(name + pw + salt).hexdigest()
 	return '%s|%s' % (h, salt)
 
-def createSalt():
+def create_salt():
 	return ''.join(random.choice(string.ascii_letters) for x in range(5))
 
 class Entries(db.Model):
@@ -84,14 +84,19 @@ class Entries(db.Model):
 
 	def render(self):
 		self._render_text = self.content.replace('\n', '<br>')
+		self._entry_id = self.key().id()
 		return render_str("/blog/entry.html", entry = self)
+
+	@classmethod
+	def by_id(cls, entry_id):
+		return cls.get_by_id(entry_id, parent = user_key())
 
 def render_str(template, **params):
 	t = jinja_env.get_template(template)
 	return t.render(params)
 
-class Entry_Likes(db.Model):
-	entry_id = db.TextProperty(required = True)
+class EntryLikes(db.Model):
+	entry_id = db.StringProperty(required = True)
 	user_id = db.StringProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 
@@ -103,7 +108,6 @@ class Comments(db.Model):
 	created = db.DateTimeProperty(auto_now_add = True)
 	last_modified = db.DateTimeProperty(auto_now = True)
 
-class Comment_Likes(db.Model):
-	comment_id = db.TextProperty(required = True)
-	user_id = db.StringProperty(required = True)
-	created = db.DateTimeProperty(auto_now_add = True)
+	def render(self):
+		self._render_text = self.content.replace('\n', '<br>')
+		return render_str("/blog/comment.html", entry = self)

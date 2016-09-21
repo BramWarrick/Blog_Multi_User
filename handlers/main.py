@@ -105,7 +105,6 @@ class BlogNewPostHandler(Handler):
 		self.render("/blog/new_entry.html", subject = "", content = "", error = "")
 
 	def get(self):
-		# self.response.write('Hello world!')
 		self.render_newpost()
 
 	def post(self):
@@ -139,21 +138,3 @@ app = webapp2.WSGIApplication([('/', MainHandler),
 
 def main():
     util.run_wsgi_app(application)
-
-# Reference Material -> Will strip for parts later
-		# self.response.headers['Content-Type'] = 'text/plain'
-		# visits = 0
-		# visit_cookie_str = self.request.cookies.get('visits')
-		# if visit_cookie_str:
-		# 	cookie_val = check_secure_val(visit_cookie_str)
-		# 	if cookie_val:
-		# 		visits = int(cookie_val)
-		# visits += 1
-		# new_cookie_val = make_secure_val(str(visits))
-
-		# self.response.headers.add_header('Set-Cookie','visits=%s' % new_cookie_val)
-
-		# if visits > 10000:
-		# 	self.write("You are the best ever!")
-		# else:
-		# 	self.write("You've been here %s times!" % visits)

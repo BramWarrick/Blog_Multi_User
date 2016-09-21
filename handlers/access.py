@@ -92,7 +92,7 @@ class SignInHandler(Handler):
 # Registration logic
 class RegistrationHandler(Handler):
 	def get(self):
-		self.render("blog/sign-up.html")
+		self.render("blog/registration.html")
 
 	def post(self):
 		username = self.request.get("username")
@@ -108,7 +108,7 @@ class RegistrationHandler(Handler):
 			self.redirect('/blog')
 
 		else:
-			self.render("blog/sign-up.html", username_error = isAllowedUsername(username),
+			self.render("blog/registration.html", username_error = isAllowedUsername(username),
 											password_error = isAllowedPassword(password),
 											verify_error = matchesPasswordVerify(password,verify),
 											email_error = isRegExEmail(email),

@@ -16,10 +16,44 @@
     <!-- Blog content with <br> replaced in for line breaks-->
     <div class="row text-center">
       <p class="col-md-10 col-md-offset-1 text-left lead">
-        {{ entry._render_text| safe }}
+        {% if entry._render_text %}
+          {{ entry._render_text| safe }}
+        {% else %}
+          {{ entry.content | safe }}
+        {% endif %}
+        
       </p>
     </div>
+
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-2 text-left">
+        {% if 1 == 1 %}
+          {% if 1 == 1 %}
+{#         {% if user %}
+          {% if user.username != author.username %} #}
+            {% if entry._entry_id %}
+              <form action="/blog/entry/{{ entry._entry_id }}/rate" method="post">
+                <button type="submit" name="like" value="like" class="btn-link">Like</button>
+                |
+                <button type="submit" name="like" value="unlike" class="btn-link">Unlike</button>
+              </form>
+            {% else %}
+                <form action="/blog/entry/{{ entry_id }}/rate" method="post">
+                <input type="hidden" name="entry_id" value="{{ entry_id }}">
+                <input type="button" name="rate" value="Like">
+                |
+                <input type="button" name="rate" value="Unlike">
+              </form>
+            {% endif %}
+          {% else %}
+            <a class="login-link" href="/blog/login">Edit</a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
   </article>
+
+
 
   <div class="row">
     <div class="col-md-12">

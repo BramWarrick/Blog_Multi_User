@@ -7,6 +7,8 @@
         <div class="col-sm-3 col-sm-offset-8 text-right login-area">
           {% if user %}
             {{user.username}} (<a class="login-link" href="/blog/logout">logout</a>)
+            <br>
+            <a class="login-link" href="/blog/newentry">Compose New Entry</a>
           {% else %}
             <a class="login-link" href="/blog/login">login</a>
             |
@@ -21,10 +23,20 @@
         </div>
         <div class="col-md-5s col-md-offset-6 text-right text-uppercase">
           <h1 class="text-thin title-super">
-            {{ author }}
+            {% if entry %}
+              <a href="/blog/{{ entry.user_id }}/all">
+                {{ author.username }}
+              </a>
+            {% else %}
+              {{ author.username }}
+            {% endif %}
           </h1>
           <h4>
-            {{ signature }}
+            <small>
+            {% if author.signature != None %}
+              {{ author.signature }}
+            {% endif %}
+            </small>
           </h4>
         </div>
       </div>

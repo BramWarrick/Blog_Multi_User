@@ -24,6 +24,9 @@ handlers:
 - url: /blog/logout
   script: handlers.access.app
 
+- url: /blog/.*/.*/.*
+  script: handlers.blog.app
+
 - url: /blog/.*/.*
   script: handlers.blog.app
 
