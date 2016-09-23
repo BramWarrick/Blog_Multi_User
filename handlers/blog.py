@@ -449,11 +449,119 @@ def entry_unlike(entry_id, user_id):
 	if entry_like:
 		entry_like.delete()
 
-class CommentHandler(Handler):
-	pass
-
 class CommentEditHandler(Handler):
 	pass
+	""" All blog entry administrative functions are here - additions and edits
+	"""
+	def render_comment_admin(self, user_curr, comment_id, content, error=""):
+		"""Renders the entry administration page. Values may be passed in.
+
+		author and user entities are used in HTML renders for comparison and
+		to fill in visual cues on the page (e.g. Author name is displayed 
+		prominently in the upper right.)
+
+	    Args:
+	        user_curr: user entity for logged in user who is also the author
+	        subject: Subject for the blog entry
+	        content: content (or body) for the blog entry
+	        error: may be used in the event user hasn't met all requirements
+	        	for a successful write of the new entry.
+	    """
+		self.render("/blog/comment_admin.html", 
+					author = user_curr,
+					user_curr = user_curr,
+					comment_id = comment_id,
+					content = content,
+					error = error
+					)
+
+	def get(self, comment_id = None):
+		"""Retrieves the correct page.
+
+		author and user entities are used in HTML renders for comparison and
+		to fill in visual cues on the page (e.g. Author name is displayed 
+		prominently in the upper right.)
+
+	    Args:
+	    	entry_id: present if entry is being modified.
+	    """
+		user_curr_id = self.read_secure_cookie('user_id')
+		user_curr = Users.by_id(user_curr_id)
+
+		comment = Comments.by_id(comment_id)
+
+		if not user_curr_id:
+			# They are in an area limited to registered users; redirect
+			self.redirect('/blog/registration')
+		elif comment:
+			if comment.user_id == user_curr_id:
+				# Comment exists, load page with values filled in
+				self.render("/blog/comment_admin.html", 
+									author = user_curr,
+									user_curr = user_curr,
+									comment_id = comment_id,
+									content = comment.content
+									)
+			else:
+				# They are not the author; redirect
+				self.redirect('/blog/registration')
+		else:
+			self.write("This comment does not exist or has been removed.")
+
+	def post(self, comment_id = None):
+		"""Sends entry data for write to Entries table
+
+		If data criteria are not met, reload page with instructive error.
+
+		If no entry exists:
+			and criteria are met, a blog entry is added to the Entries table.
+		If entry exists:
+			validate user logged in is original author
+			and criteria are met, blog entry is updated.
+
+	    Args:
+	    	entry_id: present if entry is being modified.
+	    """
+		content = self.request.get("content")
+		user_curr_id = self.read_secure_cookie('user_id')
+		user_curr = Users.by_id(user_curr_id)
+
+
+
+		if content:
+			# Data requirement met
+			comment = Comments.by_id(comment_id)
+			if comment:
+				# Comment exists, is current user the author
+				if comment.user_id == user_curr_id:
+					authorized_comment_edit(comment, content)
+					self.redirect('/blog/entry/%s' % comment.entry_id)
+				else:
+					# Current user is not author
+					# While unlikely, possible with shared computer/multiple tabs
+					self.redirect('/blog/registration')
+			else:
+				self.write("That comment does not exist or has been deleted.")
+		else:
+			# Data requirements are not met
+			error = "Please provide some content"
+			self.render_comment_admin(user_curr = user_curr,
+									content = content,
+									error = error)
+
+
+def authorized_comment_edit(comment, content):
+	"""Writes new blog entry to Entries table.
+
+	Entry is the entity to be modified, values are updated.
+
+    Args:
+    	entry: the entry being modified is passed in
+    	subject: author's modified subject
+    	content: author's modified blog content (body)
+    """
+	comment.content = content
+	comment.put()
 
 app = webapp2.WSGIApplication([
 								(r'/blog/([a-zA-Z0-9_-]+)/all', UserBlogHandler),
@@ -461,8 +569,7 @@ app = webapp2.WSGIApplication([
 								('/blog/newentry', EntryAdminHandler),
 								(r'/blog/entry/([0-9]+)/edit', EntryAdminHandler),
 								(r'/blog/entry/([0-9]+)/rate', EntryRateHandler),
-								(r'/blog/entry/([0-9]+)/comment', CommentHandler),
-								(r'/blog/entry/([0-9]+)/comment/edit', CommentEditHandler),
+								(r'/blog/comment/([0-9]+)/edit', CommentEditHandler),
 								('/blog/welcome', WelcomeHandler),
 								('/blog',WelcomeHandler),
 								],

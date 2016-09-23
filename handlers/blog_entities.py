@@ -197,6 +197,13 @@ class Comments(db.Model):
 	last_modified = db.DateTimeProperty(auto_now = True)
 
 	@classmethod
+	def by_id(cls, comment_id):
+		""" Returns entry entity based on entry_id"""
+		if type(comment_id) is not int:
+			comment_id = int(comment_id)
+		return cls.get_by_id(comment_id, parent = None)
+
+	@classmethod
 	def by_entry_id(cls, entry_id):
 		""" Returns all comments for entry_id"""
 		if type(entry_id) is not str:

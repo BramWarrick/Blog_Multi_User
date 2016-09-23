@@ -11,3 +11,4 @@ Removed hr (rule) from index.html; reinstated index.html as landing page
 # Added comments to blog_entities.py
 # Minor fixes after code hygiene run
 # Added sorts to blog_entities.py functions that needed date sort
+# Added ability to edit comments
