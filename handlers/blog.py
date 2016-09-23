@@ -50,6 +50,7 @@ def check_secure_val(h):
 #####  Handlers  #####
 #####            #####
 ######################
+
 # General Handler, base of all subsequent handlers
 class Handler(webapp2.RequestHandler):
 	def write(self, *a, **kw):
@@ -127,7 +128,7 @@ class WelcomeHandler(Handler):
 
 		Otherwise they are sent to the Registration screen.
 		"""
-		user_curr = Users.by_hash(self.read_secure_cookie('user_id'))
+		user_curr = Users.by_id(self.read_secure_cookie('user_id'))
 		if user_curr:
 			entries = Entries.by_user_id(user_curr.key().id())
 			author = user_curr
