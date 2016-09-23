@@ -116,8 +116,12 @@ class Entries(db.Model):
 		key = db.Key.from_path('Entries', int(entry_id))
 		q = cls.all().filter('__key__ =', key).fetch(1)
 
-		user_id = Entries.by_id(entry_id).user_id
-		author = Users.by_id(user_id)
+		if q:
+			user_id = Entries.by_id(entry_id).user_id
+			author = Users.by_id(user_id)
+		else:
+			user_id = ""
+			author = ""
 
 		comments = Comments.by_entry_id(entry_id)
 		return q, author, comments
@@ -186,7 +190,7 @@ class EntryLikes(db.Model):
 
 class Comments(db.Model):
 	""" Contains all user comments, linked to a parent blog entry"""
-	entry_id = db.TextProperty(required = True)
+	entry_id = db.StringProperty(required = True)
 	user_id = db.StringProperty(required = True)
 	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
@@ -195,6 +199,8 @@ class Comments(db.Model):
 	@classmethod
 	def by_entry_id(cls, entry_id):
 		""" Returns all comments for entry_id"""
+		if type(entry_id) is not str:
+			entry_id = str(entry_id)
 		q = cls.all().filter('entry_id =', entry_id).fetch(99)
 		return q
 
@@ -207,4 +213,4 @@ class Comments(db.Model):
 			author: user entity for the author of entry(s)"""
 		self._render_text = self.content.replace('\n', '<br>')
 		self._comment_id = self.key().id()
-		return render_str("/blog/comment.html", entry = self)
+		return render_str("/blog/comment.html", comment = self)

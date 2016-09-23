@@ -6,19 +6,25 @@
           {{ comment.author }}
         </h3>
       </div>
-      <div class="col-md-2 header-date">
-        <small>
-          Created: {{  comment.created.strftime("%b %d, %Y")  }}
-        </small>
-      </div>
     </div>
 
     <!-- Blog content with <br> replaced in for line breaks-->
     <div class="row text-center">
-      <p class="col-md-10 col-md-offset-1 text-left lead">
+      <p class="col-md-8 col-md-offset-2 text-left">
         {{ comment._render_text| safe }}
       </p>
     </div>
+  </article>
+
+  <div class="row">
+    <div class="col-xs-2 col-xs-offset-7">
+      <small>
+        <a href="/blog/comment/{{ comment._comment_id | safe }}/edit">
+          Created: {{  comment.created.strftime("%b %d, %Y")  }}
+        </a>
+      </small>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-md-12">

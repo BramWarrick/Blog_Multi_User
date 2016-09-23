@@ -189,6 +189,8 @@ class EntrySingleHandler(Handler):
 		if entries:
 			# Get user data for HTML logic; displaying correct user options
 			user_curr = Users.by_id(self.read_secure_cookie('user_id'))
+			comments = Comments.by_entry_id(entry_id)
+			self.write(comments)
 			self.render("/blog/entry_single.html", 
 						entries = entries, 
 						author = author, 
@@ -215,26 +217,32 @@ class EntrySingleHandler(Handler):
 	    """
 		content = self.request.get("content")
 		user_curr_id = self.read_secure_cookie('user_id')
+		entries, author, comments = Entries.by_id_iterable(entry_id)
 
-		if subject and content:
-			# Data requirements are met
-			entry = Entries.by_entry_id_if_exists(entry_id)
-			if entry:
-				if entry.user_id == user_curr_id:
-					# Current user is the author
-					self.write("Handle comments here!!!")
-					self.redirect('/blog/entry/%s' % entry.key().id())
-				else:
-					self.redirect('/blog/registration')
-			else:
+		if content:
+			# Data requirement met
+			if entries:
 				comment_new_write(entry_id, content, user_curr_id)
+				user_curr = Users.by_id(self.read_secure_cookie('user_id'))
+				self.write(comments)
+				self.render("/blog/entry_single.html", 
+							entries = entries, 
+							author = author, 
+							user_curr = user_curr,
+							entry_id = entry_id,
+							comments = comments
+							)
 		else:
-			error = "Please provide both a subject and some content"
-			user_curr = Users.by_id(user_curr_id)
-			self.render_entry_admin(user_curr = user_curr,
-									subject = subject,
-									content = content,
-									error = error)
+			error = "Please provide a comment"
+			user_curr = Users.by_id(self.read_secure_cookie('user_id'))
+			comments = Comments.by_entry_id(entry_id)
+			self.render("/blog/entry_single.html", 
+						entries = Entries.by_id_iterable(entry_id), 
+						author = user_curr, 
+						user_curr = user_curr,
+						entry_id = entry_id,
+						comments = comments
+						)
 
 def comment_new_write(entry_id, content, user_id):
 	"""Writes a new comment to the Comments table.

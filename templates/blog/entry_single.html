@@ -9,11 +9,11 @@
 	{% endfor %}
 
 
-	{% if comments %}
+	{% for comment in comments %}
 
-		{% include "/blog/comment_loop.html" %}
+		{{ comment.render() | safe }}
 		
-	{% endif %}
+	{% endfor %}
 
 
 	{% if user_curr %}

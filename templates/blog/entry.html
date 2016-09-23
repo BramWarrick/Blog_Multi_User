@@ -17,8 +17,8 @@
 
     <div class="row">
       <div class="col-sm-4 col-sm-offset-2 text-left">
-        {%  if entry.user  %}
-          {%  if entry.user.username != entry.author.username  %}
+        {%  if entry.user_curr  %}
+          {%  if entry.user_curr.username != entry.author.username  %}
             <form action="/blog/entry/{{ entry._entry_id | safe }}/rate" method="post">
               <button type="submit" name="like" value="like" class="btn-link">Like</button>
               |
