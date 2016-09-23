@@ -28,11 +28,6 @@ template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'template
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 								autoescape = True)
 
-# class RelEnvironment(jinja2.Environment):
-# 	"""Override join_path() to enable relative template paths."""
-# 	def join_path(self, template, parent):
-# 		return os.path.join(os.path.dirname(parent), templates)
-
 # Security helper functions
 def hash_str(s):
 	return hmac.new('89frheojco;d94&', s, hashlib.sha1).hexdigest()
@@ -44,6 +39,14 @@ def check_secure_val(h):
 	val = h.split('|')[0]
 	if h == make_secure_val(val):
 		return val
+
+def entry_if_exists(entry_id):
+	if entry_id:
+		return Entries.by_id(int(entry_id))
+
+def user_if_exists(user_id):
+	if user_id:
+		return Users.by_id(int(user_id))
 
 # Handlers 
 
@@ -89,146 +92,170 @@ def render_str(template, **params):
 	return t.render(params)
 
 class UserBlogHandler(Handler):
-	def get(self, user_id, error=""):
+	def get(self, username, error=""):
+		author = Users.by_name(username)
 		entries = db.GqlQuery("SELECT * FROM Entries "
 							"WHERE user_id = '%s' "
 							"ORDER BY created DESC "
-							% Users.by_id(int(user_id)).key().id()
+							% author.key().id()
 							)
-		author = Users.by_id(int(user_id))
 		user = Users.by_hash(self.read_secure_cookie('user_id'))
 		if user:
-			self.render("/blog/blog.html",
+			self.render("/blog/entry_loop.html",
 						entries = entries,
 						author = author,
 						user = user)
 		else:
-			self.render("/blog/blog.html",
+			self.render("/blog/entry_loop.html",
 						entries = entries,
 						author = author)
 
 class EntrySingleHandler(Handler):
 	def get(self, entry_id):
 
-		key = db.Key.from_path('Entries', int(entry_id))
-		entry = db.get(key)
+		entries = Entries.by_id_fetch(entry_id)
+		comments = Comments.by_entry_id(entry_id)
 
-		if entry:
-			# self.write(entry.user_id)
-			author = Users.by_id(int(entry.user_id))
+		if entries:
+			for entry in entries:
+				# self.write(entry.user_id)
+				author = Users.by_id(int(entry.user_id))
 			user = Users.by_hash(self.read_secure_cookie('user_id'))
 			if user:
-				self.render("/blog/single_entry.html", 
-							entry = entry, 
+				self.render("/blog/entry_loop.html", 
+							entries = entries, 
 							author = author, 
 							user = user,
-							entry_id = entry_id
+							entry_id = entry_id,
+							comments = comments
 							)
 			else:
-				self.render("/blog/single_entry.html", 
-							entry = entry, 
+				self.render("/blog/entry_loop.html", 
+							entries = entries, 
 							author = author,
-							entry_id = entry_id
+							entry_id = entry_id,
+							comments = comments
 							)
 		else:
 			self.write("This entry does not exist or has been removed.")
 
-class EntryNewHandler(Handler):
-	def render_entry_admin(self, user, error=""):
-		user = Users.by_hash(self.read_secure_cookie('user_id'))
-		if user:
-			author = user
-			self.render("/blog/new_entry.html", 
-						author = author,
-						user = user,
-						subject = "",
-						content = ""
-						)
-		else:
-			self.redirect('/blog/registration')
+# class EntryNewHandler(Handler):
+# 	def render_entry_admin(self, user, subject="", content="",error=""):
+# 		user = Users.by_hash(self.read_secure_cookie('user_id'))
+# 		if user:
+# 			author = user
+# 			self.render("/blog/entry_admin.html", 
+# 						author = author,
+# 						user = user,
+# 						subject = subject,
+# 						content = content,
+# 						error = error
+# 						)
+# 		else:
+# 			self.redirect('/blog/registration')
 
-	def get(self):
-		user = Users.by_hash(self.read_secure_cookie('user_id'))
-		if user:
-			self.render_entry_admin(user = user)
-		else:
-			self.redirect('/blog/registration')
+# 	def get(self):
+# 		user = user_if_exists(self.read_secure_cookie('user_id'))
+# 		if user:
+# 			self.render_entry_admin(user = user)
+# 		else:
+# 			self.redirect('/blog/registration')
 
-	def post(self):
-		subject = self.request.get("subject")
-		content = self.request.get("content")
+# 	def post(self):
+# 		subject = self.request.get("subject")
+# 		content = self.request.get("content")
+# 		user_id = self.read_secure_cookie('user_id')
+# 		user = Users.by_id(user_id)
 
-		user = Users.by_hash(self.read_secure_cookie('user_id'))
-		if user:
-			user_id = str(user.key().id())
-			if subject and content:
-				e = Entries(subject = subject,
-							content = content,
-							user_id = user_id)
-				e.put()
+# 		if user:
+# 			if subject and content:
+# 				e = Entries(subject = subject,
+# 							content = content,
+# 							user_id = user_id)
+# 				e.put()
 
-				self.redirect('/blog/entry/%s' % str(e.key().id()))
-			else:
-				error = "Please provide both a subject and some content"
-				self.render_entry_admin(subject = subject,
-									content = content,
-									error = error)
-		else:
-			self.redirect('/blog/registration')
+# 				self.redirect('/blog/entry/%s' % str(e.key().id()))
+# 			else:
+# 				error = "Please provide both a subject and some content"
+# 				self.render_entry_admin(user = user,
+# 										subject = subject,
+# 										content = content,
+# 										error = error)
+# 		else:
+# 			self.redirect('/blog/registration')
 
-class EntryReviseHandler(Handler):
-	def render_entry_admin(self, user, entry, error=""):
-		self.render("/blog/new_entry.html", 
+class EntryAdminHandler(Handler):
+	def render_entry_admin(self, user, subject, content, error=""):
+		self.render("/blog/entry_admin.html", 
 					author = user,
 					user = user,
-					subject = entry.subject,
-					content = entry.content
+					subject = subject,
+					content = content,
+					error = error
 					)
 
-	def get(self, entry_id):
-		key = db.Key.from_path('Entries', int(entry_id))
-		entry = db.get(key)
+	def get(self, entry_id = None):
+		user_id = self.read_secure_cookie('user_id')
+		user = Users.by_id(int(user_id))
 
-		if entry:
-			if entry.user_id == self.read_secure_cookie('user_id'):
-				author = Users.by_id(int(entry.user_id))
-				if author:
-					user = author
-					self.render_entry_admin(user = user, entry = entry)
-				else:
-					self.write("The author of this entry cannot be found.")
-			else:
-				self.redirect('/blog/registration')
-		else:
-			self.write("This entry does not exist or has been removed.")
-
-
-	def post(self, entry_id):
-		key = db.Key.from_path('Entries', int(entry_id))
-		entry = db.get(key)
-
-		if entry:
-			if entry.user_id == self.read_secure_cookie('user_id'):
-				author = Users.by_id(int(entry.user_id))
-				if author:
-					user = author
-
-					subject = self.request.get("subject")
-					content = self.request.get("content")
-					if subject and content:
-
-						entry.subject= subject
-						entry.content = content
-						entry.put()
-
-						self.redirect('/blog/entry/%s' % entry_id)
+		if not user_id:
+			self.redirect('/blog/registration')
+		elif entry_id:
+			entry = Entries.by_id(int(entry_id))
+			if entry:
+				if entry.user_id == user_id:
+					author = Users.by_id(int(entry.user_id))
+					if author:
+						user = author
+						self.render_entry_admin(user = user,
+												subject = entry.subject,
+												content = entry.content
+												)
 					else:
-						error = "Please provide both a subject and some content"
-						self.render_entry_admin(subject = subject,
+						self.write("The author of this entry cannot be found.")
+				else:
+					self.redirect('/blog/registration')
+			else:
+				self.write("This entry does not exist or has been removed.")
+		else:
+			self.render_entry_admin(user = user,
+									subject = "",
+									content = ""
+									)
+
+	def post(self, entry_id = None):
+		subject = self.request.get("subject")
+		content = self.request.get("content")
+		user_id = self.read_secure_cookie('user_id')
+
+		if not subject or not content:
+			error = "Please provide both a subject and some content"
+			self.render_entry_admin(user = user_id,
+									subject = subject,
 									content = content,
 									error = error)
+		elif entry_id:
+			entry = Entries.by_id(int(entry_id))
+			if entry:
+				if entry.user_id == user_id:
+					entry.subject= subject
+					entry.content = content
+					entry.put()
+
+					self.redirect('/blog/entry/%s' % entry_id)
+				else:
+					self.redirect('/blog/registration')
 		else:
-			self.redirect('/blog/registration')
+			e = Entries(subject = subject,
+						content = content,
+						user_id = user_id)
+			e.put()
+
+			self.redirect('/blog/entry/%s' % str(e.key().id()))
+
+	def missing_entry_values(user_id, subject, content)
+		# I'm a stub
+		pass
 
 class EntryRateHandler(Handler):
 	def post(self, entry_id):
@@ -237,89 +264,52 @@ class EntryRateHandler(Handler):
 
 		if user_id:
 			if rate == "like":
-				q = EntryLikes.all()
-				q.filter("entry_id =", entry_id)
-				q.filter("user_id =", user_id)
-				if q.fetch(9) != []:
-					self.write("Stub - the user has previously liked this entry. Make an error?")
+				entry_like = EntryLikes.by_entry_user_id(entry_id, user_id)
+				if entry_like:
+					self.write(entry_like)
+					self.write("<br><br>Stub - the user has previously liked this entry. Make an error?")
 				else:
 					e = EntryLikes(entry_id = entry_id,
 									user_id = user_id)
 					e.put()
 			else:
-				self.write("deleting like<br>")
-				self.write(entry_id)
-				entry = Entries.by_id(int(entry_id))
-				self.write(entry)
-				# employee = db.get(employee_k)
+				entry_like = EntryLikes.by_entry_user_id(entry_id, user_id)
+				if entry_like:
+					entry_like.delete()
 
-				# entry.delete()
-		# self.write(entry_id)
+		self.redirect('/blog/entry/%s' % entry_id)
 
-class EntryLikeHandler(Handler):
-	def get(self, entry_id):
-		user_id = self.read_secure_cookie('user_id')
-		# if user_id:
-			# q = EntryLikes.all()
-			# q.filter("entry_id=", entry_id)
-			# q.filter("user_id=", user.key().id())
-			# if q.entry_id:
-			# 	self.write("Stub - the user has previously liked this entry. Make an error?")
-			# else:
-		e = EntryLikes(entry_id = entry_id,
-						user_id = user_id)
-		e.put()
-		# self.write(entry_id)
+class CommentHandler(Handler):
+	pass
 
-		# key = db.Key.from_path('Entries', int(entry_id))
-		# entry = db.get(key)
-
-		# user = Users.by_hash(self.read_secure_cookie('user_id'))
-		# if user:
-		# 	self.render('/blog/welcome.html',
-		# 				username = user.username)
-
-		# if entry:
-		# 	if int(entry.user_id) == check_secure_val(self.read_secure_cookie('user_id')):
-		# 		author = Users.by_id(int(entry.user_id))
-		# 		if author:
-		# 			user = author
-
-		# 			subject = self.request.get("subject")
-		# 			content = self.request.get("content")
-		# 			if subject and content:
-		# 				with client.transaction():
-
-		# 					entry['subject'] = subject
-		# 					entry['content'] = content
-
-		# 					entry.put()
-
-		# 				self.redirect('/blog/entry/%s' % entry_id)
-		# 			else:
-		# 				error = "Please provide both a subject and some content"
-		# 				self.render_entry_admin(subject = subject,
-		# 							content = content,
-		# 							error = error)
-		# else:
-			# self.redirect('/blog/registration')
+class CommentEditHandler(Handler):
+	pass
 
 class WelcomeHandler(Handler):
 	def get(self):
 		user = Users.by_hash(self.read_secure_cookie('user_id'))
 		if user:
-			self.render('/blog/welcome.html',
-						username = user.username)
+			entries = db.GqlQuery("SELECT * FROM Entries "
+								"WHERE user_id = '%s' "
+								"ORDER BY created DESC "
+								% user.key().id()
+								)
+			author = user
+			self.render("/blog/entry_loop.html",
+						entries = entries,
+						author = author,
+						user = user)
 		else:
 			self.redirect('/blog/registration')
 
 app = webapp2.WSGIApplication([
 								(r'/blog/([a-zA-Z0-9_-]+)/all', UserBlogHandler),
 								(r'/blog/entry/([0-9]+)', EntrySingleHandler),
-								('/blog/newentry', EntryNewHandler),
-								(r'/blog/entry/([0-9]+)/edit', EntryReviseHandler),
+								('/blog/newentry', EntryAdminHandler),
+								(r'/blog/entry/([0-9]+)/edit', EntryAdminHandler),
 								(r'/blog/entry/([0-9]+)/rate', EntryRateHandler),
-								(r'/blog/entry/([0-9]+)/like', EntryLikeHandler),
+								(r'/blog/entry/([0-9]+)/comment', CommentHandler),
+								(r'/blog/entry/([0-9]+)/comment/edit', CommentEditHandler),
 								('/blog/welcome', WelcomeHandler),
 								('/blog',WelcomeHandler),
 								],

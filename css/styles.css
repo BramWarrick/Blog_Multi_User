@@ -30,6 +30,22 @@ footer {
 	font-size: 1.5em;
 }
 
+.margin-top-sm {
+	margin-top: 4px;
+}
+
+.margin-top-none {
+	margin-top: 0px;
+}
+
+.margin-bottom-sm {
+	margin-bottom: 4px;
+}
+
+.margin-bottom-none {
+	margin-top: 0px;
+}
+
 .text-thin {
 	font-weight: 100;
 }

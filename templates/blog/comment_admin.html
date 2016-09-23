@@ -5,9 +5,9 @@
       <!-- Begin Featured Work -->
 
       <form class = "margin-top-none" method="post">
-        <label class="row margin-top-none">
+        <div class="row margin-top-none">
           <div class="col-md-3 col-md-offset-1">
-            Subject
+            Comment
           </div>
           <div class="col-md-1 col-md-offset-5">
               <button class="btn btn-default" type="button"  
@@ -15,20 +15,10 @@
                 <img class = "img-responsive" src="/img/sm_trash_can.png">
               </button>
           </div>
-          <div class="row margin-bottom-sm">
-            <input class="col-md-9 col-md-offset-1 text-center" type="text" name="subject" value="{{ subject }}">
-          </div>
-       
-        </label>
-
-        <label class="row">
-          <div class="col-md-9 col-md-offset-1">
-            Content
-          </div>
-          <div class="row margin-bottom-sm">
-            <textarea class="col-md-9 col-md-offset-1" rows="10" name="content">{{ content }}</textarea>
-          </div>
-        </label>
+        </div>
+        <div class="row margin-bottom-sm">
+          <textarea class="col-md-9 col-md-offset-1" rows="10" name="content">{{ content }}</textarea>
+        </div>
 
         {% if error %}
           <div class="row margin-bottom-sm">

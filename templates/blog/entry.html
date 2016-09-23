@@ -1,59 +1,43 @@
   <!-- Begin Blog entry -->
   <article>
     <div class="row">
-      <div class="col-md-10">
+      <div class="col-md-9 col-md-offset-1 text-center">
         <h3>
           {{ entry.subject }}
         </h3>
-      </div>
-      <div class="col-md-2 header-date">
-        <small>
-          Created: {{  entry.created.strftime("%b %d, %Y")  }}
-        </small>
       </div>
     </div>
 
     <!-- Blog content with <br> replaced in for line breaks-->
     <div class="row text-center">
-      <p class="col-md-10 col-md-offset-1 text-left lead">
-        {% if entry._render_text %}
-          {{ entry._render_text| safe }}
-        {% else %}
-          {{ entry.content | safe }}
-        {% endif %}
-        
+      <p class="col-md-9 col-md-offset-1 text-left lead">
+        {{ entry._render_text | default(entry.content, true) | replace("\n", "<br>") | safe }}
       </p>
     </div>
 
     <div class="row">
       <div class="col-sm-4 col-sm-offset-2 text-left">
-        {% if 1 == 1 %}
-          {% if 1 == 1 %}
-{#         {% if user %}
-          {% if user.username != author.username %} #}
-            {% if entry._entry_id %}
-              <form action="/blog/entry/{{ entry._entry_id }}/rate" method="post">
-                <button type="submit" name="like" value="like" class="btn-link">Like</button>
-                |
-                <button type="submit" name="like" value="unlike" class="btn-link">Unlike</button>
-              </form>
-            {% else %}
-                <form action="/blog/entry/{{ entry_id }}/rate" method="post">
-                <input type="hidden" name="entry_id" value="{{ entry_id }}">
-                <input type="button" name="rate" value="Like">
-                |
-                <input type="button" name="rate" value="Unlike">
-              </form>
-            {% endif %}
+        {%  if entry.user  %}
+          {%  if entry.user.username != entry.author.username  %}
+            <form action="/blog/entry/{{ entry._entry_id | safe }}/rate" method="post">
+              <button type="submit" name="like" value="like" class="btn-link">Like</button>
+              |
+              <button type="submit" name="like" value="unlike" class="btn-link">Unlike</button>
+            </form>
           {% else %}
-            <a class="login-link" href="/blog/login">Edit</a>
+            <a class="login-link" href="/blog/entry/{{ entry._entry_id | safe }}/edit">Edit</a>
           {% endif %}
         {% endif %}
       </div>
+      <div class="col-sm-4 header-date text-right">
+      {# <small> #}
+        <a class="login-link" href="/blog/entry/{{ entry._entry_id | safe }}">
+          Created: {{  entry.created.strftime("%b %d, %Y")  }}
+        </a>
+      {# </small> #}
+      </div>
     </div>
   </article>
-
-
 
   <div class="row">
     <div class="col-md-12">

@@ -108,63 +108,68 @@ class RegistrationHandler(Handler):
 			self.redirect('/blog')
 
 		else:
-			self.render("blog/registration.html", username_error = isAllowedUsername(username),
-											password_error = isAllowedPassword(password),
-											verify_error = matchesPasswordVerify(password,verify),
-											email_error = isRegExEmail(email),
+			self.render("blog/registration.html", username_error = is_allowed_username(username),
+											password_error = is_allowed_password(password),
+											verify_error = matches_password_verify(password,verify),
+											email_error = is_regex_email(email),
 											username = username,
 											email = email
 											)
 
 # Registration - helper function
 def check_submission(username, password, verify, email):
-	if isAllowedUsername(username) == "" and isAllowedPassword(password) == "" and matchesPasswordVerify(password, verify) == "" and isRegExEmail(email) == "":
+	if is_allowed_username(username) == "" and is_allowed_password(password) == "" and matches_password_verify(password, verify) == "" and is_regex_email(email) == "":
 		return True
 	else:
 		return False
 
 # Registration - User validations with error messages
-def isAllowedUsername(username):
-	if not filledUsername(username):
+def is_allowed_username(username):
+	if not is_filled_username(username):
 		return "Username is a required field."
-	elif not isRegExUsername(username):
-		return "Username must be 3-20 characters, using letters and numbers."
-	elif existsUsername(username):
+	elif not is_regex_username(username):
+		return "Username must be 3-20 characters, using letters or numbers."
+	elif is_numeric_username(username):
+		return "Username must contain at least one letter."
+	elif exists_username(username):
 		return "Username already in use."
 	else: 
 		return ""
 
-def filledUsername(username):
+def is_filled_username(username):
 	return len(username) > 0
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
-def isRegExUsername(username):
+def is_regex_username(username):
 	return USER_RE.match(username)
 
-def existsUsername(username):
+def is_numeric_username(username):
+	return username.isdigit()
+
+def exists_username(username):
 	q = Users.all()
 	q.filter("username = ", username)
 
 	return q.get()
 
 # Registration - Password validations with error messages
-def isAllowedPassword(password):
-	if not filledPassword(password):
+def is_allowed_password(password):
+	if not is_filled_password(password):
 		return  "Password is a required field."
-	elif not isRegExPassword(password):
+	elif not is_regex_password(password):
 		return "That is not a valid password."
 	else:
 		return ""
 
-def filledPassword(password):
+def is_filled_password(password):
 	return len(password) > 0
 
 PASSWORD_RE=re.compile(r"^.{3,20}$")
-def isRegExPassword(password):
+def is_regex_password(password):
 	return PASSWORD_RE.match(password)
 
 # Registration - Password Verification with error message is not a match
-def matchesPasswordVerify(password, verify):
+def matches_password_verify(password, verify):
 	if password and not password == verify:
 		return "Your passwords didn't match."
 	else:
@@ -172,13 +177,13 @@ def matchesPasswordVerify(password, verify):
 
 # Registration - Email validation with error message if needed
 EMAIL_RE=re.compile(r"^[\S]+@[\S]+.[\S]+$")
-def isRegExEmail(email):
-	if email and not validEmail(email):
+def is_regex_email(email):
+	if email and not is_valid_email(email):
 		return "That is not a valid email."
 	else:
 		return ""
 
-def validEmail(email):
+def is_valid_email(email):
 	return EMAIL_RE.match(email)
 
 # Login logic

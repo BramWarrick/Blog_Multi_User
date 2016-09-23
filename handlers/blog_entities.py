@@ -3,6 +3,7 @@ import jinja2
 import random
 import hashlib
 import hmac
+import string
 
 from google.appengine.ext import db
 
@@ -82,14 +83,22 @@ class Entries(db.Model):
 	created = db.DateTimeProperty(auto_now_add = True)
 	last_modified = db.DateTimeProperty(auto_now = True)
 
-	def render(self):
-		self._render_text = self.content.replace('\n', '<br>')
-		self._entry_id = self.key().id()
-		return render_str("/blog/entry.html", entry = self)
-
 	@classmethod
 	def by_id(cls, entry_id):
-		return cls.get_by_id(entry_id, parent = user_key())
+		return cls.get_by_id(entry_id, parent = None)
+
+	@classmethod
+	def by_id_fetch(cls, entry_id):
+		key = db.Key.from_path('Entries', int(entry_id))
+		q = cls.all().filter('__key__ =', key).fetch(1)
+		return q
+
+	def render(self, user=None, author=None):
+		self._render_text = self.content.replace('\n', '<br>')
+		self._entry_id = self.key().id()
+		self.user = user
+		self.author = author
+		return render_str("/blog/entry.html", entry = self)
 
 def render_str(template, **params):
 	t = jinja_env.get_template(template)
@@ -100,14 +109,27 @@ class EntryLikes(db.Model):
 	user_id = db.StringProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 
+	@classmethod
+	def by_entry_user_id(cls, entry_id, user_id):
+		q = db.GqlQuery("SELECT * FROM EntryLikes "
+						"WHERE entry_id = '%s' "
+						"AND user_id = '%s'"
+						% (entry_id, user_id))
+		return q.get()
+
 class Comments(db.Model):
 	entry_id = db.TextProperty(required = True)
-	comment_parent_id = db.TextProperty(required = True)
 	user_id = db.StringProperty(required = True)
 	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 	last_modified = db.DateTimeProperty(auto_now = True)
 
+	@classmethod
+	def by_entry_id(cls, entry_id):
+		q = cls.all().filter('entry_id =', entry_id).get()
+		return q
+
 	def render(self):
 		self._render_text = self.content.replace('\n', '<br>')
+		self._comment_id = self.key().id()
 		return render_str("/blog/comment.html", entry = self)

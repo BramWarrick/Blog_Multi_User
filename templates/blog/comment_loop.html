@@ -1,0 +1,9 @@
+{% block content %}
+
+      {% for comment in comments %}
+
+        {{ comment.render() | safe }}
+
+      {% endfor %}
+
+{% endblock %}
