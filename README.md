@@ -9,3 +9,4 @@ Removed hr (rule) from index.html; reinstated index.html as landing page
 # added comments on blog.py; changed to user_curr for clarity
 # Added comments to access.py
 # Added comments to blog_entities.py
+# Minor fixes after code hygiene run

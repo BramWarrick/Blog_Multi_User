@@ -345,8 +345,8 @@ class EntryAdminHandler(Handler):
 					self.redirect('/blog/registration')
 			else:
 				# No entry exists, write new one
-				entry_new_write(subject, content, user_id)
-				self.redirect('/blog/entry/%s' % str(e.key().id()))
+				entry_id = entry_new_write(subject, content, user_curr_id)
+				self.redirect('/blog/entry/%s' % entry_id)
 		else:
 			# Data requirements are not met
 			error = "Please provide both a subject and some content"
@@ -381,8 +381,9 @@ def entry_new_write(subject, content, author_id):
     """
 	e = Entries(subject = subject,
 				content = content,
-				author_id = author_id)
+				user_id = author_id)
 	e.put()
+	return str(e.key().id())
 
 class EntryRateHandler(Handler):
 	""" Handles all logic for user liking and unliking a blog post.
@@ -400,7 +401,7 @@ class EntryRateHandler(Handler):
 		user_curr = self.read_secure_cookie('user_id')
 		rate = self.request.get("like")
 
-		if user_id:
+		if user_curr:
 			if rate == "like":
 				# User liked the entry
 				entry_like(entry_id, user_curr)
@@ -411,34 +412,34 @@ class EntryRateHandler(Handler):
 
 		self.redirect('/blog/entry/%s' % entry_id)
 
-	# Helper functions for Rating Blog Entries
-	def entry_like(entry_id, user_curr_id):
-		"""Adds an entry to the EntryLikes table, if user is not liking a
-			previously liked blog entry.
+# Helper functions for Rating Blog Entries
+def entry_like(entry_id, user_curr_id):
+	"""Adds an entry to the EntryLikes table, if user is not liking a
+		previously liked blog entry.
 
-		Validates user hasn't already voted.
-		If no vote exists, writes a new like to the EntryLikes table.
+	Validates user hasn't already voted.
+	If no vote exists, writes a new like to the EntryLikes table.
 
-	    Args:
-	    	entry_id: entry_id of the entry being liked
-	    	user_curr_id: user_id of the logged in user
-	    """
-		entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
-		if entry_like:
-			self.write("<br><br>Stub - the user has previously liked this "
-						"entry. Make an error?")
-		elif Entries.by_id(entry_id).user_id == user_curr_id:
-			self.write("<br><br>Stub - the user cannot like their own blog "
-						"entry. Make an error?")
-		else:
-			e = EntryLikes(entry_id = entry_id,
-							user_id = user_curr_id)
-			e.put()
+    Args:
+    	entry_id: entry_id of the entry being liked
+    	user_curr_id: user_id of the logged in user
+    """
+	entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
+	if entry_like:
+		self.write("<br><br>Stub - the user has previously liked this "
+					"entry. Make an error?")
+	elif Entries.by_id(entry_id).user_id == user_curr_id:
+		self.write("<br><br>Stub - the user cannot like their own blog "
+					"entry. Make an error?")
+	else:
+		e = EntryLikes(entry_id = entry_id,
+						user_id = user_curr_id)
+		e.put()
 
-	def entry_unlike(entry_id, user_id):
-		entry_like = EntryLikes.by_entry_user_id(entry_id, user_id)
-		if entry_like:
-			entry_like.delete()
+def entry_unlike(entry_id, user_id):
+	entry_like = EntryLikes.by_entry_user_id(entry_id, user_id)
+	if entry_like:
+		entry_like.delete()
 
 class CommentHandler(Handler):
 	pass

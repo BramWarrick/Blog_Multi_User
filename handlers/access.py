@@ -155,10 +155,10 @@ class RegistrationHandler(Handler):
 # Registration - helper function
 def check_submission(username, password, verify, email):
 	""" If all validations return empty strings, returns True"""
-	if is_allowed_username(username) == "" 
-		and is_allowed_password(password) == "" 
-		and matches_password_verify(password, verify) == "" 
-		and is_allowed_email(email) == "":
+	if (is_allowed_username(username) +
+		is_allowed_password(password) + 
+		matches_password_verify(password, verify) + 
+		is_allowed_email(email)) == "":
 		
 		return True
 	else:
