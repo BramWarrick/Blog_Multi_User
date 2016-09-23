@@ -7,3 +7,4 @@ Removed hr (rule) from index.html; reinstated index.html as landing page
 # Formatted, most dead ends fixed. Consolidated EntryAdminHandler functions
 # Minor housekeeping; deleted old templates
 # added comments on blog.py; changed to user_curr for clarity
+# Added comments to access.py
