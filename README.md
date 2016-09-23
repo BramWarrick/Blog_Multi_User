@@ -5,3 +5,4 @@ Removed hr (rule) from index.html; reinstated index.html as landing page
 # Added most log-in/out functionality
 # Added 'like/dislike' functionality - uses POST :-(
 # Formatted, most dead ends fixed. Consolidated EntryAdminHandler functions
+# Minor housekeeping; deleted old templates
