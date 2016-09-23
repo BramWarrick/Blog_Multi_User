@@ -345,7 +345,7 @@ class EntryAdminHandler(Handler):
 			if entry:
 				# Entry exists is current user the author
 				if entry.user_id == user_curr_id:
-					authorized_edit(entry, subject, content)
+					authorized_entry_edit(entry, subject, content)
 					self.redirect('/blog/entry/%s' % entry.key().id())
 				else:
 					# Current user is not author
@@ -363,7 +363,7 @@ class EntryAdminHandler(Handler):
 									content = content,
 									error = error)
 
-def authorized_edit(entry, subject, content):
+def authorized_entry_edit(entry, subject, content):
 	"""Writes new blog entry to Entries table.
 
 	Entry is the entity to be modified, values are updated.
