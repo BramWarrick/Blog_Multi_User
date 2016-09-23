@@ -82,6 +82,10 @@ def create_password_hash(name, pw, salt=None):
 def create_salt():
 	return ''.join(random.choice(string.ascii_letters) for x in range(5))
 
+def entry_key(group = 'default'):
+	"""Returns the parent key for entries"""
+	return db.Key.from_path('entries', group)
+
 class Entries(db.Model):
 	""" Contains all blog entries """
 	user_id = db.StringProperty(required = True)
@@ -91,11 +95,21 @@ class Entries(db.Model):
 	last_modified = db.DateTimeProperty(auto_now = True)
 
 	@classmethod
+	def new_entry(cls, user_id, subject, content):
+		"""I'd worked in the entry_key logic in the hope it would
+		speed responsiveness. I'm doing a lot of refreshing to see that the
+		data wrote. Alas...  it does not seem to help."""
+		return cls(parent = entry_key(),
+						user_id = user_id,
+						subject = subject,
+						content = content)
+
+	@classmethod
 	def by_id(cls, entry_id):
 		""" Returns entry entity based on entry_id"""
 		if type(entry_id) is not int:
 			entry_id = int(entry_id)
-		return cls.get_by_id(entry_id, parent = None)
+		return cls.get_by_id(entry_id, parent = entry_key())
 
 	@classmethod
 	def by_id_iterable(cls, entry_id):
@@ -113,7 +127,7 @@ class Entries(db.Model):
 			entry: a single entry entity
 			author: user entity for the author of the entry
 			comments: all comments for this blog entry"""
-		key = db.Key.from_path('Entries', int(entry_id))
+		key = db.Key.from_path('Entries', int(entry_id), parent=entry_key())
 		q = cls.all().filter('__key__ =', key).fetch(1)
 
 		if q:
@@ -201,7 +215,7 @@ class Comments(db.Model):
 		""" Returns entry entity based on entry_id"""
 		if type(comment_id) is not int:
 			comment_id = int(comment_id)
-		return cls.get_by_id(comment_id, parent = None)
+		return cls.get_by_id(comment_id)
 
 	@classmethod
 	def by_entry_id(cls, entry_id):

@@ -13,3 +13,4 @@ Removed hr (rule) from index.html; reinstated index.html as landing page
 # Added sorts to blog_entities.py functions that needed date sort
 # Added ability to edit comments
 # renamed one fuction for clarity
+# Comments are deletable, added delays due to datastore lag

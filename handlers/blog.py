@@ -21,6 +21,7 @@ import jinja2
 import re
 import hashlib
 import hmac
+import time
 
 from google.appengine.ext import db
 
@@ -190,7 +191,7 @@ class EntrySingleHandler(Handler):
 			# Get user data for HTML logic; displaying correct user options
 			user_curr = Users.by_id(self.read_secure_cookie('user_id'))
 			comments = Comments.by_entry_id(entry_id)
-			self.write(comments)
+
 			self.render("/blog/entry_single.html", 
 						entries = entries, 
 						author = author, 
@@ -199,7 +200,8 @@ class EntrySingleHandler(Handler):
 						comments = comments
 						)
 		else:
-			self.write("This entry does not exist or has been removed.")
+			message = "This entry does not exist or has been removed."
+			self.redirect("/blog")
 
 	def post(self, entry_id):
 		"""Receives a user comment and writes to Comments table.
@@ -224,7 +226,8 @@ class EntrySingleHandler(Handler):
 			if entries:
 				comment_new_write(entry_id, content, user_curr_id)
 				user_curr = Users.by_id(self.read_secure_cookie('user_id'))
-				self.write(comments)
+				time.sleep(5)
+
 				self.render("/blog/entry_single.html", 
 							entries = entries, 
 							author = author, 
@@ -318,7 +321,8 @@ class EntryAdminHandler(Handler):
 				# They are not the author; redirect
 				self.redirect('/blog/registration')
 		else:
-			self.write("This entry does not exist or has been removed.")
+			message = "This entry does not exist or has been removed."
+			self.redirect("/blog")
 
 	def post(self, entry_id = None):
 		"""Sends entry data for write to Entries table
@@ -339,29 +343,50 @@ class EntryAdminHandler(Handler):
 		user_curr_id = self.read_secure_cookie('user_id')
 		user_curr = Users.by_id(user_curr_id)
 
-		if subject and content:
-			# Data requirements are met
+		action = self.request.get("submit")
+
+		if action == "delete":
 			entry = Entries.by_entry_id_if_exists(entry_id)
 			if entry:
-				# Entry exists is current user the author
+				# Entry exists, is current user the author
 				if entry.user_id == user_curr_id:
-					authorized_entry_edit(entry, subject, content)
-					self.redirect('/blog/entry/%s' % entry.key().id())
+					entry.delete()
+					message = "Entry deleted!"
+					time.sleep(5)
+					self.redirect("/blog")
 				else:
 					# Current user is not author
-					# While unlikely, possible with shared computer/multiple tabs
+					# If users create more than one account, this is needed
+					message = "Action not allowed"
 					self.redirect('/blog/registration')
 			else:
-				# No entry exists, write new one
-				entry_id = entry_new_write(subject, content, user_curr_id)
-				self.redirect('/blog/entry/%s' % entry_id)
-		else:
-			# Data requirements are not met
-			error = "Please provide both a subject and some content"
-			self.render_entry_admin(user_curr = user_curr,
-									subject = subject,
-									content = content,
-									error = error)
+				message = "Entry does not exist or has been deleted"
+				self.redirect("/blog")
+		else:	# Submit pressed
+		 	if subject and content:
+				entry = Entries.by_entry_id_if_exists(entry_id)
+				if entry:
+					# Entry exists, is current user the author?
+					if entry.user_id == user_curr_id:
+						authorized_entry_edit(entry, subject, content)
+						time.sleep(5)
+						self.redirect("/blog/entry/%s" % entry.key().id())
+					else:
+						# Current user is not author
+						# If users create more than one account, this is needed
+						self.redirect("/blog/registration")
+				else:
+					# No entry exists, write new one
+					entry_id = entry_new_write(subject, content, user_curr_id)
+					time.sleep(5)
+					self.redirect("/blog/entry/%s" % entry_id)
+			else:
+				# Data requirements are not met
+				error = "Please provide both a subject and some content"
+				self.render_entry_admin(user_curr = user_curr,
+										subject = subject,
+										content = content,
+										error = error)
 
 def authorized_entry_edit(entry, subject, content):
 	"""Writes new blog entry to Entries table.
@@ -387,9 +412,7 @@ def entry_new_write(subject, content, author_id):
     	content: author's modified blog content (body)
     	author_id: user_id for the current user; the author
     """
-	e = Entries(subject = subject,
-				content = content,
-				user_id = author_id)
+	e = Entries.new_entry(author_id, subject, content)
 	e.put()
 	return str(e.key().id())
 
@@ -418,6 +441,7 @@ class EntryRateHandler(Handler):
 				# Hotlinks to the page, for vote cheating are punished
 				entry_unlike(entry_id, user_curr)
 
+		time.sleep(5)
 		self.redirect('/blog/entry/%s' % entry_id)
 
 # Helper functions for Rating Blog Entries
@@ -433,16 +457,17 @@ def entry_like(entry_id, user_curr_id):
     	user_curr_id: user_id of the logged in user
     """
 	entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
+	message = ""
 	if entry_like:
-		self.write("<br><br>Stub - the user has previously liked this "
-					"entry. Make an error?")
+		message = "You have previously liked this entry."
 	elif Entries.by_id(entry_id).user_id == user_curr_id:
-		self.write("<br><br>Stub - the user cannot like their own blog "
-					"entry. Make an error?")
+		message = "It is pretty spectaular, isn't it?"
+		" Unfortunately, you cannot like your own entry."
 	else:
 		e = EntryLikes(entry_id = entry_id,
 						user_id = user_curr_id)
 		e.put()
+	return message
 
 def entry_unlike(entry_id, user_id):
 	entry_like = EntryLikes.by_entry_user_id(entry_id, user_id)
@@ -450,7 +475,6 @@ def entry_unlike(entry_id, user_id):
 		entry_like.delete()
 
 class CommentEditHandler(Handler):
-	pass
 	""" All blog entry administrative functions are here - additions and edits
 	"""
 	def render_comment_admin(self, user_curr, comment_id, content, error=""):
@@ -506,7 +530,8 @@ class CommentEditHandler(Handler):
 				# They are not the author; redirect
 				self.redirect('/blog/registration')
 		else:
-			self.write("This comment does not exist or has been removed.")
+			message = "This comment does not exist or has been removed."
+			self.redirect("/blog")
 
 	def post(self, comment_id = None):
 		"""Sends entry data for write to Entries table
@@ -526,28 +551,48 @@ class CommentEditHandler(Handler):
 		user_curr_id = self.read_secure_cookie('user_id')
 		user_curr = Users.by_id(user_curr_id)
 
+		action = self.request.get("submit")
 
-
-		if content:
-			# Data requirement met
+		if action == "delete":
 			comment = Comments.by_id(comment_id)
 			if comment:
-				# Comment exists, is current user the author
+				# Entry exists, is current user the author
 				if comment.user_id == user_curr_id:
-					authorized_comment_edit(comment, content)
-					self.redirect('/blog/entry/%s' % comment.entry_id)
+					comment.delete()
+					time.sleep(5)
+					message = "Comment deleted!"
+					self.redirect("/blog")
 				else:
 					# Current user is not author
-					# While unlikely, possible with shared computer/multiple tabs
+					# If users create more than one account, this is needed
+					message = "Action not allowed"
 					self.redirect('/blog/registration')
 			else:
-				self.write("That comment does not exist or has been deleted.")
-		else:
-			# Data requirements are not met
-			error = "Please provide some content"
-			self.render_comment_admin(user_curr = user_curr,
-									content = content,
-									error = error)
+				message = "Entry does not exist or has been deleted"
+				self.redirect("/blog")
+		else:	# Submit pressed
+			if content:
+				# Data requirement met
+				comment = Comments.by_id(comment_id)
+				if comment:
+					# Comment exists, is current user the author
+					if comment.user_id == user_curr_id:
+						authorized_comment_edit(comment, content)
+						time.sleep(5)
+						self.redirect('/blog/entry/%s' % comment.entry_id)
+					else:
+						# Current user is not author
+						# If users create more than one account, this is needed
+						self.redirect('/blog/registration')
+				else:
+					message = "That comment does not exist or has been deleted."
+					self.redirect("/blog")
+			else:
+				# Data requirements are not met
+				error = "Please provide some content"
+				self.render_comment_admin(user_curr = user_curr,
+										content = content,
+										error = error)
 
 
 def authorized_comment_edit(comment, content):
