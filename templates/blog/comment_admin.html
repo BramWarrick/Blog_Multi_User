@@ -1,11 +1,10 @@
-{% extends "/blog/base.html" %}
-
 {% block content %}
   
       <!-- Begin Featured Work -->
-
-      <form class = "margin-top-none" method="post">
-        <div class="row margin-top-none">
+      <br>
+      <form method="post">
+      
+        <div class="row">
           <div class="col-md-3 col-md-offset-1">
             Comment
           </div>
@@ -15,9 +14,9 @@
                 <img class = "img-responsive" src="/img/sm_trash_can.png">
               </button>
           </div>
-        </div>
-        <div class="row margin-bottom-sm">
-          <textarea class="col-md-9 col-md-offset-1" rows="10" name="content">{{ content }}</textarea>
+          <div class="row margin-bottom-sm">
+            <textarea class="col-md-9 col-md-offset-1" rows="6s" name="content">{{ content }}</textarea>
+          </div>
         </div>
 
         {% if error %}
@@ -28,18 +27,27 @@
           </div>
         {% endif %}
 
+        <br>
+
         <div class="row">
-          <button type="submit" name="submit" value="submit" class="col-md-1 col-md-offset-2 btn btn-default">
-            Submit
-          </button>
-          <button type="reset" name="reset" value="reset" class="col-md-1 col-md-offset-2 btn btn-default">
-            Reset
-          </button>
-          <button type="submit" name="submit" value="cancel" class="col-md-1 col-md-offset-2 btn btn-default">
-            Cancel
-          </button>
+          <div class="col-md-1 col-md-offset-2">
+            <button type="submit" name="submit" value="submit" class="btn btn-default">
+              Submit
+            </button>
+          </div>
+          <div class="col-md-1 col-md-offset-2">
+            <button type="reset" name="reset" value="reset" class="btn btn-default">
+              Reset
+            </button>
+          </div>
+          <div class="col-md-1 col-md-offset-2">
+            <button type="submit" name="submit" value="cancel" class="btn btn-default">
+              Cancel
+            </button>
+          </div>
         </div>
 
     </form>
+    <br><br><br>
 
 {% endblock %}

@@ -10,8 +10,8 @@
         </div>
         <div class="col-md-7 col-md-offset-1 text-right">
           <small>
-            {% if user %}
-              {{user.username}} (<a class="login-link" href="/blog/logout">logout</a>)
+            {% if user_curr %}
+              {{user_curr.username}} (<a class="login-link" href="/blog/logout">logout</a>)
               <br>
               <a class="login-link" href="/blog/newentry">Compose New Entry</a>
             {% else %}

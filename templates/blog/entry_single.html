@@ -8,10 +8,18 @@
 
 	{% endfor %}
 
+
 	{% if comments %}
 
 		{% include "/blog/comment_loop.html" %}
 		
+	{% endif %}
+
+
+	{% if user_curr %}
+
+		{% include "/blog/comment_admin.html" %}
+
 	{% endif %}
 
 {% endblock %}

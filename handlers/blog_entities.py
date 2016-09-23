@@ -25,7 +25,9 @@ class Users(db.Model):
 
 	@classmethod
 	def by_id(cls, uid):
-		return cls.get_by_id(uid, parent = user_key())
+		if type(uid) is not int and uid:
+			uid = int(uid)
+			return cls.get_by_id(uid, parent = user_key())
 
 	@classmethod
 	def by_name(cls, name):
@@ -85,13 +87,33 @@ class Entries(db.Model):
 
 	@classmethod
 	def by_id(cls, entry_id):
+		if type(entry_id) is not int:
+			entry_id = int(entry_id)
 		return cls.get_by_id(entry_id, parent = None)
 
 	@classmethod
-	def by_id_fetch(cls, entry_id):
+	def by_id_iterable(cls, entry_id):
 		key = db.Key.from_path('Entries', int(entry_id))
 		q = cls.all().filter('__key__ =', key).fetch(1)
-		return q
+
+		user_id = Entries.by_id(entry_id).user_id
+		author = Users.by_id(user_id)
+
+		comments = Comments.by_entry_id(entry_id)
+		return q, author, comments
+
+	@classmethod
+	def by_user_id(cls, user_id):
+		if type(user_id) is not str:
+			user_id = str(user_id)
+		e = cls.all().filter('user_id =', user_id).fetch(99)
+		return e
+
+	@classmethod
+	def by_entry_id_if_exists(cls, entry_id = None):
+		if entry_id:
+			return Entries.by_id(int(entry_id))
+
 
 	def render(self, user=None, author=None):
 		self._render_text = self.content.replace('\n', '<br>')
@@ -126,7 +148,7 @@ class Comments(db.Model):
 
 	@classmethod
 	def by_entry_id(cls, entry_id):
-		q = cls.all().filter('entry_id =', entry_id).get()
+		q = cls.all().filter('entry_id =', entry_id).fetch(99)
 		return q
 
 	def render(self):
