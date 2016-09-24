@@ -235,14 +235,18 @@ class EntrySingleHandler(Handler):
 	    """
 		content = self.request.get("content")
 		user_curr_id = self.read_secure_cookie('user_id')
-		entries, author, comments = Entries.by_id_iterable(entry_id)
-		msg = self.get_and_erase_msg_cookie()
+		user_curr = Users.by_id(user_curr_id)
 
-		if content:
+		entries, author, comments = Entries.by_id_iterable(entry_id)
+
+		msg = self.get_and_erase_msg_cookie()
+		action = self.request.get("submit")
+
+
+		if content and action == "submit":
 			# Data requirement met
 			if entries:
 				comment_new_write(entry_id, content, user_curr_id)
-				user_curr = Users.by_id(self.read_secure_cookie('user_id'))
 				time.sleep(1)
 
 				self.render("/blog/entry_single.html", 
@@ -253,12 +257,22 @@ class EntrySingleHandler(Handler):
 							comments = comments,
 							msg = msg
 							)
+
+		elif action == "delete":
+			self.render("/blog/entry_single.html", 
+						entries = entries, 
+						author = author, 
+						user_curr = user_curr,
+						entry_id = entry_id,
+						comments = "",
+						msg = msg
+						)
 		else:
 			error = "Please provide a comment"
 			user_curr = Users.by_id(self.read_secure_cookie('user_id'))
 			comments = Comments.by_entry_id(entry_id)
 			self.render("/blog/entry_single.html", 
-						entries = Entries.by_id_iterable(entry_id), 
+						entries = entries, 
 						author = user_curr, 
 						user_curr = user_curr,
 						entry_id = entry_id,
@@ -456,7 +470,7 @@ class EntryRateHandler(Handler):
 		if user_curr:
 			if rate == "like":
 				# User liked the entry
-				entry_like(entry_id, user_curr)
+				self.entry_like(entry_id, user_curr)
 			else:
 				# User unliked the blog entry
 				# Hotlinks to the page, for vote cheating are punished
@@ -466,28 +480,28 @@ class EntryRateHandler(Handler):
 		self.redirect('/blog/entry/%s' % entry_id)
 
 # Helper functions for Rating Blog Entries
-def entry_like(entry_id, user_curr_id):
-	"""Adds an entry to the EntryLikes table, if user is not liking a
-		previously liked blog entry.
+	def entry_like(self, entry_id, user_curr_id):
+		"""Adds an entry to the EntryLikes table, if user is not liking a
+			previously liked blog entry.
 
-	Validates user hasn't already voted.
-	If no vote exists, writes a new like to the EntryLikes table.
+		Validates user hasn't already voted.
+		If no vote exists, writes a new like to the EntryLikes table.
 
-    Args:
-    	entry_id: entry_id of the entry being liked
-    	user_curr_id: user_id of the logged in user
-    """
-	entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
+	    Args:
+	    	entry_id: entry_id of the entry being liked
+	    	user_curr_id: user_id of the logged in user
+	    """
+		entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
 
-	if entry_like:
-		self.set_msg_cookie("You have previously liked this entry.")
-	elif Entries.by_id(entry_id).user_id == user_curr_id:
-		self.set_msg_cookie("It is pretty spectaular, isn't it?"
-		" Unfortunately, you cannot like your own entry.")
-	else:
-		e = EntryLikes(entry_id = entry_id,
-						user_id = user_curr_id)
-		e.put()
+		if entry_like:
+			self.set_msg_cookie("You have previously liked this entry.")
+		elif Entries.by_id(entry_id).user_id == user_curr_id:
+			self.set_msg_cookie("It is pretty spectaular, isn't it?"
+			" Unfortunately, you cannot like your own entry.")
+		else:
+			e = EntryLikes(entry_id = entry_id,
+							user_id = user_curr_id)
+			e.put()
 
 def entry_unlike(entry_id, user_id):
 	entry_like = EntryLikes.by_entry_user_id(entry_id, user_id)
@@ -582,10 +596,13 @@ class CommentEditHandler(Handler):
 			if comment:
 				# Entry exists, is current user the author
 				if comment.user_id == user_curr_id:
+					# Keep user or entry's main page
+					entry_id = comment.entry_id
 					comment.delete()
-					time.sleep(1)
+					# Set message, then delay due to GAE lag
 					self.set_msg_cookie("Comment deleted!")
-					self.redirect("/blog")
+					time.sleep(1)
+					self.redirect("/blog/entry/%s" % entry_id)
 				else:
 					# Current user is not author
 					# If users create more than one account, this is needed

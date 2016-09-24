@@ -174,6 +174,7 @@ class Entries(db.Model):
 		self._entry_id = self.key().id()
 		self.user_curr = user_curr
 		self.author = author
+		self._likes = EntryLikes.likes_by_entry_id(self.key().id())
 		return render_str("/blog/entry.html", entry = self)
 
 def render_str(template, **params):
@@ -201,6 +202,13 @@ class EntryLikes(db.Model):
 						"AND user_id = '%s'"
 						% (entry_id, user_curr_id))
 		return q.get()
+
+	@classmethod
+	def likes_by_entry_id(cls, entry_id):
+		if type(entry_id) is not str:
+			entry_id = str(entry_id)
+		count = cls.all(keys_only=True).filter('entry_id =', entry_id).count()
+		return count
 
 class Comments(db.Model):
 	""" Contains all user comments, linked to a parent blog entry"""

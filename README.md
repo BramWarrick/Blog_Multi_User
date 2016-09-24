@@ -16,3 +16,4 @@ Removed hr (rule) from index.html; reinstated index.html as landing page
 # Comments are deletable, added delays due to datastore lag
 # debugging GAE messages about indexes
 # Added messaging logic; cookie
+# added visibility to like count

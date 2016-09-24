@@ -29,7 +29,10 @@
           {% endif %}
         {% endif %}
       </div>
-      <div class="col-sm-4 header-date text-right">
+      <div class="col-sm-1 text-right text-danger">
+        likes: {{  entry._likes  }}
+      </div>
+      <div class="col-sm-2 header-date text-center">
       {# <small> #}
         <a class="login-link" href="/blog/entry/{{ entry._entry_id | safe }}">
           Created: {{  entry.created.strftime("%b %d, %Y")  }}
