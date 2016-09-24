@@ -8,7 +8,14 @@
         <div class="col-md-1 col-md-offset-1">
           <img class="img-responsive title-logo" src="/img/udacity.svg" alt="Udacity logo">
         </div>
-        <div class="col-md-7 col-md-offset-1 text-right">
+        <div class = "col-md-5 col-md-offset-1 text-center bg-warning">
+          {% if msg %}
+            <strong>
+              {{ msg | replace("+", " ") }}
+            </strong>
+          {% endif %}
+        </div>
+        <div class="col-md-2 text-right">
           <small>
             {% if user_curr %}
               {{user_curr.username}} (<a class="login-link" href="/blog/logout">logout</a>)

@@ -74,6 +74,17 @@ class Handler(webapp2.RequestHandler):
 		"""
 		self.write(self.render_string(template, **kw))
 
+	def set_msg_cookie(self, message):
+		""" Sets the message cookie, used for feedback on header"""
+		message = message.replace(" ", "+")
+		self.set_secure_cookie("msg", message)
+
+	def get_and_erase_msg_cookie(self):
+		""" Wipes cookie from user's browser, logging them out."""
+		message = self.read_secure_cookie('msg')
+		self.response.headers.add_header('Set-Cookie', 'msg=; Path=/')
+		return message
+
 	def set_secure_cookie(self, name, val):
 		""" Sets cookie on the users machine
 		
@@ -130,13 +141,16 @@ class WelcomeHandler(Handler):
 		Otherwise they are sent to the Registration screen.
 		"""
 		user_curr = Users.by_id(self.read_secure_cookie('user_id'))
+		msg = self.get_and_erase_msg_cookie()
+
 		if user_curr:
 			entries = Entries.by_user_id(user_curr.key().id())
 			author = user_curr
 			self.render("/blog/entry_loop.html",
 						entries = entries,
 						author = author,
-						user_curr = user_curr)
+						user_curr = user_curr,
+						msg = msg)
 		else:
 			self.redirect('/blog/registration')
 
@@ -186,6 +200,7 @@ class EntrySingleHandler(Handler):
 
 	    # If the enty exists, pull the author and comments for rendering.
 		entries, author, comments = Entries.by_id_iterable(entry_id)
+		msg = self.get_and_erase_msg_cookie()
 
 		if entries:
 			# Get user data for HTML logic; displaying correct user options
@@ -197,10 +212,11 @@ class EntrySingleHandler(Handler):
 						author = author, 
 						user_curr = user_curr,
 						entry_id = entry_id,
-						comments = comments
+						comments = comments,
+						msg = msg
 						)
 		else:
-			message = "This entry does not exist or has been removed."
+			self.set_msg_cookie("This entry does not exist or has been removed.")
 			self.redirect("/blog")
 
 	def post(self, entry_id):
@@ -220,20 +236,22 @@ class EntrySingleHandler(Handler):
 		content = self.request.get("content")
 		user_curr_id = self.read_secure_cookie('user_id')
 		entries, author, comments = Entries.by_id_iterable(entry_id)
+		msg = self.get_and_erase_msg_cookie()
 
 		if content:
 			# Data requirement met
 			if entries:
 				comment_new_write(entry_id, content, user_curr_id)
 				user_curr = Users.by_id(self.read_secure_cookie('user_id'))
-				time.sleep(5)
+				time.sleep(1)
 
 				self.render("/blog/entry_single.html", 
 							entries = entries, 
 							author = author, 
 							user_curr = user_curr,
 							entry_id = entry_id,
-							comments = comments
+							comments = comments,
+							msg = msg
 							)
 		else:
 			error = "Please provide a comment"
@@ -244,7 +262,8 @@ class EntrySingleHandler(Handler):
 						author = user_curr, 
 						user_curr = user_curr,
 						entry_id = entry_id,
-						comments = comments
+						comments = comments,
+						msg= msg
 						)
 
 def comment_new_write(entry_id, content, user_id):
@@ -278,12 +297,14 @@ class EntryAdminHandler(Handler):
 	        error: may be used in the event user hasn't met all requirements
 	        	for a successful write of the new entry.
 	    """
+		msg = self.get_and_erase_msg_cookie()
 		self.render("/blog/entry_admin.html", 
 					author = user_curr,
 					user_curr = user_curr,
 					subject = subject,
 					content = content,
-					error = error
+					error = error,
+					msg = msg
 					)
 
 	def get(self, entry_id = None):
@@ -321,7 +342,7 @@ class EntryAdminHandler(Handler):
 				# They are not the author; redirect
 				self.redirect('/blog/registration')
 		else:
-			message = "This entry does not exist or has been removed."
+			self.set_msg_cookie("This entry does not exist or has been removed.")
 			self.redirect("/blog")
 
 	def post(self, entry_id = None):
@@ -351,16 +372,16 @@ class EntryAdminHandler(Handler):
 				# Entry exists, is current user the author
 				if entry.user_id == user_curr_id:
 					entry.delete()
-					message = "Entry deleted!"
-					time.sleep(5)
+					self.set_msg_cookie("Entry deleted!")
+					time.sleep(1)
 					self.redirect("/blog")
 				else:
 					# Current user is not author
 					# If users create more than one account, this is needed
-					message = "Action not allowed"
+					self.set_msg_cookie("Action not allowed")
 					self.redirect('/blog/registration')
 			else:
-				message = "Entry does not exist or has been deleted"
+				self.set_msg_cookie("Entry does not exist or has been deleted")
 				self.redirect("/blog")
 		else:	# Submit pressed
 		 	if subject and content:
@@ -369,7 +390,7 @@ class EntryAdminHandler(Handler):
 					# Entry exists, is current user the author?
 					if entry.user_id == user_curr_id:
 						authorized_entry_edit(entry, subject, content)
-						time.sleep(5)
+						time.sleep(1)
 						self.redirect("/blog/entry/%s" % entry.key().id())
 					else:
 						# Current user is not author
@@ -378,7 +399,7 @@ class EntryAdminHandler(Handler):
 				else:
 					# No entry exists, write new one
 					entry_id = entry_new_write(subject, content, user_curr_id)
-					time.sleep(5)
+					time.sleep(1)
 					self.redirect("/blog/entry/%s" % entry_id)
 			else:
 				# Data requirements are not met
@@ -441,7 +462,7 @@ class EntryRateHandler(Handler):
 				# Hotlinks to the page, for vote cheating are punished
 				entry_unlike(entry_id, user_curr)
 
-		time.sleep(5)
+		time.sleep(1)
 		self.redirect('/blog/entry/%s' % entry_id)
 
 # Helper functions for Rating Blog Entries
@@ -457,17 +478,16 @@ def entry_like(entry_id, user_curr_id):
     	user_curr_id: user_id of the logged in user
     """
 	entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
-	message = ""
+
 	if entry_like:
-		message = "You have previously liked this entry."
+		self.set_msg_cookie("You have previously liked this entry.")
 	elif Entries.by_id(entry_id).user_id == user_curr_id:
-		message = "It is pretty spectaular, isn't it?"
-		" Unfortunately, you cannot like your own entry."
+		self.set_msg_cookie("It is pretty spectaular, isn't it?"
+		" Unfortunately, you cannot like your own entry.")
 	else:
 		e = EntryLikes(entry_id = entry_id,
 						user_id = user_curr_id)
 		e.put()
-	return message
 
 def entry_unlike(entry_id, user_id):
 	entry_like = EntryLikes.by_entry_user_id(entry_id, user_id)
@@ -491,12 +511,14 @@ class CommentEditHandler(Handler):
 	        error: may be used in the event user hasn't met all requirements
 	        	for a successful write of the new entry.
 	    """
+		msg = self.get_and_erase_msg_cookie()
 		self.render("/blog/comment_admin.html", 
 					author = user_curr,
 					user_curr = user_curr,
 					comment_id = comment_id,
 					content = content,
-					error = error
+					error = error,
+					msg = msg
 					)
 
 	def get(self, comment_id = None):
@@ -513,6 +535,7 @@ class CommentEditHandler(Handler):
 		user_curr = Users.by_id(user_curr_id)
 
 		comment = Comments.by_id(comment_id)
+		msg = self.get_and_erase_msg_cookie()
 
 		if not user_curr_id:
 			# They are in an area limited to registered users; redirect
@@ -524,13 +547,14 @@ class CommentEditHandler(Handler):
 									author = user_curr,
 									user_curr = user_curr,
 									comment_id = comment_id,
-									content = comment.content
+									content = comment.content,
+									msg = msg
 									)
 			else:
 				# They are not the author; redirect
 				self.redirect('/blog/registration')
 		else:
-			message = "This comment does not exist or has been removed."
+			self.set_msg_cookie("This comment does not exist or has been removed.")
 			self.redirect("/blog")
 
 	def post(self, comment_id = None):
@@ -559,16 +583,16 @@ class CommentEditHandler(Handler):
 				# Entry exists, is current user the author
 				if comment.user_id == user_curr_id:
 					comment.delete()
-					time.sleep(5)
-					message = "Comment deleted!"
+					time.sleep(1)
+					self.set_msg_cookie("Comment deleted!")
 					self.redirect("/blog")
 				else:
 					# Current user is not author
 					# If users create more than one account, this is needed
-					message = "Action not allowed"
+					self.set_msg_cookie("Action not allowed")
 					self.redirect('/blog/registration')
 			else:
-				message = "Entry does not exist or has been deleted"
+				self.set_msg_cookie("Entry does not exist or has been deleted")
 				self.redirect("/blog")
 		else:	# Submit pressed
 			if content:
@@ -578,14 +602,14 @@ class CommentEditHandler(Handler):
 					# Comment exists, is current user the author
 					if comment.user_id == user_curr_id:
 						authorized_comment_edit(comment, content)
-						time.sleep(5)
+						time.sleep(1)
 						self.redirect('/blog/entry/%s' % comment.entry_id)
 					else:
 						# Current user is not author
 						# If users create more than one account, this is needed
 						self.redirect('/blog/registration')
 				else:
-					message = "That comment does not exist or has been deleted."
+					self.set_msg_cookie("That comment does not exist or has been deleted.")
 					self.redirect("/blog")
 			else:
 				# Data requirements are not met

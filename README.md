@@ -15,3 +15,4 @@ Removed hr (rule) from index.html; reinstated index.html as landing page
 # renamed one fuction for clarity
 # Comments are deletable, added delays due to datastore lag
 # debugging GAE messages about indexes
+# Added messaging logic; cookie

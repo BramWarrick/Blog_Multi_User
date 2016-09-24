@@ -145,7 +145,7 @@ class Entries(db.Model):
 		""" Returns most recent 99 entries for user_id """
 		if type(user_id) is not str:
 			user_id = str(user_id)
-		e = cls.all().filter('user_id =', user_id).order('-last_modified').fetch(99)
+		e = cls.all().filter('user_id =', user_id).order('user_id').order('-created').fetch(99)
 		return e
 
 	@classmethod
