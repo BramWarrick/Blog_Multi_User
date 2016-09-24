@@ -257,12 +257,12 @@ class LogoutHandler(Handler):
 		self.logout()
 		self.redirect('/blog')
 
-app = webapp2.WSGIApplication([('/sign-up', RegistrationHandler),
-								('/signin', RegistrationHandler),
-								('/sign-in', RegistrationHandler),
-								('/blog/sign-up', RegistrationHandler),
-								('/blog/signin', RegistrationHandler),
-								('/blog/sign-in', RegistrationHandler),
+class RedirectRegistrationHandler(Handler):
+	def get(self):
+		self.redirect('/blog/registration')
+
+app = webapp2.WSGIApplication([('/sign-up', RedirectRegistrationHandler),
+								('/blog/sign-up', RedirectRegistrationHandler),
 								('/blog/registration', RegistrationHandler),
 								('/login', LoginHandler),
 								('/blog/login', LoginHandler),

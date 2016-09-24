@@ -154,7 +154,7 @@ class WelcomeHandler(Handler):
 		else:
 			self.redirect('/blog/registration')
 
-class UserBlogHandler(Handler):
+class UserHandler(Handler):
 	""" Handles all traffic in the format of /blog/(authorname)
 
 	Displays all blog entries in scolling format sorted in reverse 
@@ -169,13 +169,17 @@ class UserBlogHandler(Handler):
 	        author_name: plaintext author name retrieved from URL
 	    """
 		author = Users.by_name(author_name)
-		entries = Entries.by_user_id(author.key().id())
-		user_curr = Users.by_id(self.read_secure_cookie('user_id'))
+		if author:
+			entries = Entries.by_user_id(author.key().id())
+			user_curr = Users.by_id(self.read_secure_cookie('user_id'))
 
-		self.render("/blog/entry_loop.html",
-					entries = entries,
-					author = author,
-					user_curr = user_curr)
+			self.render("/blog/entry_loop.html",
+						entries = entries,
+						author = author,
+						user_curr = user_curr)
+		else:
+			self.set_msg_cookie("This user does not exist or has been removed.")
+			self.redirect("/blog")
 
 class EntrySingleHandler(Handler):
 	""" Renders single blog entry pages - this includes a comments section
@@ -247,7 +251,7 @@ class EntrySingleHandler(Handler):
 			# Data requirement met
 			if entries:
 				comment_new_write(entry_id, content, user_curr_id)
-				time.sleep(1)
+				time.sleep(2)
 
 				self.render("/blog/entry_single.html", 
 							entries = entries, 
@@ -387,7 +391,7 @@ class EntryAdminHandler(Handler):
 				if entry.user_id == user_curr_id:
 					entry.delete()
 					self.set_msg_cookie("Entry deleted!")
-					time.sleep(1)
+					time.sleep(2)
 					self.redirect("/blog")
 				else:
 					# Current user is not author
@@ -404,7 +408,7 @@ class EntryAdminHandler(Handler):
 					# Entry exists, is current user the author?
 					if entry.user_id == user_curr_id:
 						authorized_entry_edit(entry, subject, content)
-						time.sleep(1)
+						time.sleep(2)
 						self.redirect("/blog/entry/%s" % entry.key().id())
 					else:
 						# Current user is not author
@@ -413,7 +417,7 @@ class EntryAdminHandler(Handler):
 				else:
 					# No entry exists, write new one
 					entry_id = entry_new_write(subject, content, user_curr_id)
-					time.sleep(1)
+					time.sleep(2)
 					self.redirect("/blog/entry/%s" % entry_id)
 			else:
 				# Data requirements are not met
@@ -476,7 +480,7 @@ class EntryRateHandler(Handler):
 				# Hotlinks to the page, for vote cheating are punished
 				entry_unlike(entry_id, user_curr)
 
-		time.sleep(1)
+		time.sleep(2)
 		self.redirect('/blog/entry/%s' % entry_id)
 
 # Helper functions for Rating Blog Entries
@@ -601,7 +605,7 @@ class CommentEditHandler(Handler):
 					comment.delete()
 					# Set message, then delay due to GAE lag
 					self.set_msg_cookie("Comment deleted!")
-					time.sleep(1)
+					time.sleep(2)
 					self.redirect("/blog/entry/%s" % entry_id)
 				else:
 					# Current user is not author
@@ -619,7 +623,7 @@ class CommentEditHandler(Handler):
 					# Comment exists, is current user the author
 					if comment.user_id == user_curr_id:
 						authorized_comment_edit(comment, content)
-						time.sleep(1)
+						time.sleep(2)
 						self.redirect('/blog/entry/%s' % comment.entry_id)
 					else:
 						# Current user is not author
@@ -649,14 +653,25 @@ def authorized_comment_edit(comment, content):
 	comment.content = content
 	comment.put()
 
+class MissingHandler(Handler):
+	def get(self):
+		self.set_msg_cookie("The requested page does not exist.")
+		self.redirect('/blog')
+
+class WelcomeRedirectHandler(Handler):
+	def get(self):
+		self.redirect('/blog')
+
 app = webapp2.WSGIApplication([
-								(r'/blog/([a-zA-Z0-9_-]+)/all', UserBlogHandler),
-								(r'/blog/entry/([0-9]+)', EntrySingleHandler),
+								('/blog',WelcomeHandler),
 								('/blog/newentry', EntryAdminHandler),
+								(r'/blog/([a-zA-Z0-9_-]+)/all', UserHandler),
+								(r'/blog/entry/([0-9]+)', EntrySingleHandler),
 								(r'/blog/entry/([0-9]+)/edit', EntryAdminHandler),
 								(r'/blog/entry/([0-9]+)/rate', EntryRateHandler),
 								(r'/blog/comment/([0-9]+)/edit', CommentEditHandler),
-								('/blog/welcome', WelcomeHandler),
-								('/blog',WelcomeHandler),
+								# Redirect Handlers
+								('/blog/welcome', WelcomeRedirectHandler),
+								(r'/blog/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+', MissingHandler),
 								],
 								debug=True)
