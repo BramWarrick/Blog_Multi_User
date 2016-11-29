@@ -1,4 +1,4 @@
-### File format
+## File format
 Instructions
 Files and purpose
 Web directories
@@ -10,7 +10,7 @@ Rationale
 
 
 
-### Instructions
+## Instructions
 git clone https://github.com/BramWarrick/Bram-FSND-Homework.git
 Point Google App Launcher to directory
 	File > Create New Application
@@ -21,7 +21,7 @@ Alternatively, use the web page at bram-fsnd.appspot.com/blog
 
 
 
-### Files and purpose
+## Files and purpose
 
 handlers/blog.py............ primary blog functions
 handlers/access.py.......... security functions for blog
@@ -31,15 +31,15 @@ index.yaml.................. indexes for GAE
 
 
 
-### Web directories
+## Web directories
 
 ## Legend
-li....logged in users
-lo....logged out users
-any...any users
+li....logged in users\n
+lo....logged out users\n
+any...any users\n
 
 ## Files
-# In blog.py file
+### In blog.py file
 /blog......................... user home (li); registration page (lo)
 /blog/newentry................ create a new blog entry (li)
 /blog/([a-zA-Z0-9_-]+)/all.... other user's blog (any)
@@ -75,7 +75,7 @@ registration............... base
 
 ### Rationale
 
-# Code separation
+#### Code separation
 
 The degree of code all cluttering the page was a bit much.
 If I wanted to separate security concerns from regular function,
@@ -84,7 +84,7 @@ If I wanted to separate security concerns from regular function,
 I feel, in the end, readability is improved.
 
 
-# Web structure
+#### Web structure
 
 I wanted links to be as multipurpose as possible, so a user's main page is
 	the same for all users (\blog). To any logged in user, /blog is home and
