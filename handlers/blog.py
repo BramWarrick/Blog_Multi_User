@@ -95,8 +95,8 @@ class Handler(webapp2.RequestHandler):
         """ Sets cookie on the users machine
 
         Args:
-                name: name to give cookie on browser
-                val: value to assign to cookie
+            name: name to give cookie on browser
+            val: value to assign to cookie
         """
         cookie_val = make_secure_val(val)
         self.response.headers.add_header(
@@ -107,7 +107,7 @@ class Handler(webapp2.RequestHandler):
         """ Reads cookie and returns the base value - if secure
 
         Arg:
-                name: name of the cookie, if present on user's browser
+            name: name of the cookie, if present on user's browser
         """
         cookie_val = self.request.cookies.get(name)
         return cookie_val and check_secure_val(cookie_val)
@@ -116,7 +116,7 @@ class Handler(webapp2.RequestHandler):
         """ Sets cookie with name of 'user_id' and value of hashed user_id
 
         Arg:
-                user: user entity for the user logging in
+            user: user entity for the user logging in
         """
         self.set_secure_cookie('user_id', str(user.key().id()))
 
@@ -211,10 +211,10 @@ class EntrySingleHandler(Handler):
         If no entry with that id is found, an error is shown to user.
 
         Args:
-        	entry_id: entry's key id, taken from the URL
+            entry_id: entry's key id, taken from the URL
         """
 
-	    # If the enty exists, pull the author and comments for rendering.
+        # If the enty exists, pull the author and comments for rendering.
         entries, author, comments = Entries.by_id_iterable(entry_id)
         msg = self.get_and_erase_msg_cookie()
 
@@ -247,9 +247,9 @@ class EntrySingleHandler(Handler):
         If no entry with that id is found, an error is shown to user. (Entry
         deleted since comment was started.)
 
-	    Args:
-	        entry_id: entry's key id, taken from the URL
-	    """
+        Args:
+            entry_id: entry's key id, taken from the URL
+        """
         content = self.request.get("content")
         user_curr_id = self.read_secure_cookie('user_id')
         user_curr = Users.by_id(user_curr_id)
@@ -300,11 +300,11 @@ class EntrySingleHandler(Handler):
 def comment_new_write(entry_id, content, user_id):
     """Writes a new comment to the Comments table.
 
-        Args:
-            entry_id: entry's key id, taken from the URL
-            content: Comment's content - text
-            user_id: id of the person entering the comment
-        """
+    Args:
+        entry_id: entry's key id, taken from the URL
+        content: Comment's content - text
+        user_id: id of the person entering the comment
+    """
     c = Comments(entry_id=entry_id,
                  content=content,
                  user_id=user_id)
@@ -322,13 +322,13 @@ class EntryAdminHandler(Handler):
         to fill in visual cues on the page (e.g. Author name is displayed
         prominently in the upper right.)
 
-    Args:
-        user_curr: user entity for logged in user who is also the author
-        subject: Subject for the blog entry
-        content: content (or body) for the blog entry
-        error: may be used in the event user hasn't met all requirements
-                for a successful write of the new entry.
-    """
+        Args:
+            user_curr: user entity for logged in user who is also the author
+            subject: Subject for the blog entry
+            content: content (or body) for the blog entry
+            error: may be used in the event user hasn't met all requirements
+                    for a successful write of the new entry.
+        """
         msg = self.get_and_erase_msg_cookie()
         self.render("/blog/entry_admin.html",
                     author=user_curr,
@@ -346,9 +346,9 @@ class EntryAdminHandler(Handler):
         to fill in visual cues on the page (e.g. Author name is displayed
         prominently in the upper right.)
 
-    Args:
-        entry_id: present if entry is being modified.
-    """
+        Args:
+            entry_id: present if entry is being modified.
+        """
         user_curr_id = self.read_secure_cookie('user_id')
         user_curr = Users.by_id(user_curr_id)
 
@@ -389,9 +389,9 @@ class EntryAdminHandler(Handler):
                 validate user logged in is original author
                 and criteria are met, blog entry is updated.
 
-	    Args:
-	        entry_id: present if entry is being modified.
-	    """
+        Args:
+            entry_id: present if entry is being modified.
+        """
         subject = self.request.get("subject")
         content = self.request.get("content")
         user_curr_id = self.read_secure_cookie('user_id')
@@ -448,11 +448,11 @@ def authorized_entry_edit(entry, subject, content):
 
     Entry is the entity to be modified, values are updated.
 
-	Args:
-	    entry: the entry being modified is passed in
-	    subject: author's modified subject
-	    content: author's modified blog content (body)
-	"""
+    Args:
+        entry: the entry being modified is passed in
+        subject: author's modified subject
+        content: author's modified blog content (body)
+    """
     entry.subject = subject
     entry.content = content
     entry.put()
@@ -463,12 +463,12 @@ def entry_new_write(subject, content, author_id):
 
     Entry is the entity to be modified, values are updated.
 
-	Args:
-	    subject: author's modified subject
-	    content: author's modified blog content (body)
-	    author_id: user_id for the current user; the author
-	"""
-    e = Entries.new_entry(author_id, subject, content)
+    Args:
+        subject: author's modified subject
+        content: author's modified blog content (body)
+        author_id: user_id for the current user; the author
+    """
+e = Entries.new_entry(author_id, subject, content)
     e.put()
     return str(e.key().id())
 
@@ -484,9 +484,9 @@ class EntryRateHandler(Handler):
         Redirect's to the blog entry's main page, which will load with comment
                 box if user is signed in; allowing easy access to feedback.
 
-	    Args:
-	        entry_id: entry_id of the entry being liked or unliked
-	    """
+        Args:
+            entry_id: entry_id of the entry being liked or unliked
+        """
         user_curr = self.read_secure_cookie('user_id')
         rate = self.request.get("like")
 
@@ -510,10 +510,10 @@ class EntryRateHandler(Handler):
         Validates user hasn't already voted.
         If no vote exists, writes a new like to the EntryLikes table.
 
-	    Args:
-	        entry_id: entry_id of the entry being liked
-	        user_curr_id: user_id of the logged in user
-	    """
+        Args:
+            entry_id: entry_id of the entry being liked
+            user_curr_id: user_id of the logged in user
+        """
         entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
 
         if entry_like:
@@ -544,13 +544,13 @@ class CommentEditHandler(Handler):
         to fill in visual cues on the page (e.g. Author name is displayed
         prominently in the upper right.)
 
-	    Args:
-	        user_curr: user entity for logged in user who is also the author
-	        subject: Subject for the blog entry
-	        content: content (or body) for the blog entry
-	        error: may be used in the event user hasn't met all requirements
-	                for a successful write of the new entry.
-	    """
+        Args:
+            user_curr: user entity for logged in user who is also the author
+            subject: Subject for the blog entry
+            content: content (or body) for the blog entry
+            error: may be used in the event user hasn't met all requirements
+                    for a successful write of the new entry.
+        """
         msg = self.get_and_erase_msg_cookie()
         self.render("/blog/comment_admin.html",
                     author=user_curr,
@@ -568,9 +568,9 @@ class CommentEditHandler(Handler):
         to fill in visual cues on the page (e.g. Author name is displayed
         prominently in the upper right.)
 
-	    Args:
-	        entry_id: present if entry is being modified.
-	    """
+        Args:
+            entry_id: present if entry is being modified.
+        """
         user_curr_id = self.read_secure_cookie('user_id')
         user_curr = Users.by_id(user_curr_id)
 
@@ -609,9 +609,9 @@ class CommentEditHandler(Handler):
                 validate user logged in is original author
                 and criteria are met, blog entry is updated.
 
-	    Args:
-	        entry_id: present if entry is being modified.
-	    """
+        Args:
+            entry_id: present if entry is being modified.
+        """
         content = self.request.get("content")
         user_curr_id = self.read_secure_cookie('user_id')
         user_curr = Users.by_id(user_curr_id)
@@ -669,11 +669,11 @@ def authorized_comment_edit(comment, content):
 
     Entry is the entity to be modified, values are updated.
 
-	Args:
-	    entry: the entry being modified is passed in
-	    subject: author's modified subject
-	    content: author's modified blog content (body)
-	"""
+    Args:
+        entry: the entry being modified is passed in
+        subject: author's modified subject
+        content: author's modified blog content (body)
+    """
     comment.content = content
     comment.put()
 
