@@ -86,35 +86,29 @@ GAE = Google App Engine
   
 ## Rationale  
   
+  
 ### Code Separation  
   
 The degree of code cluttering the page was a bit much.  
-If I wanted to separate security concerns from regular function,  
-	Kinds/Entities would need to be imported somewhere. So I created  
-	three files. Entities, Access (security) and Blog (core functionality).  
+
+If I wanted to separate security concerns from regular function, Kinds/Entities would need to be imported somewhere. So I created three files. Entities, Access (security) and Blog (core functionality).  
+
 I feel, in the end, readability is improved.  
   
   
 ### URI (Web structure)  
   
-I wanted links to be as multipurpose as possible, so a user's main page is  
-	the same for all users (/blog). To any logged in user, /blog is home and  
-	/blog/newentry is where they create entries.  
+I wanted links to be as multipurpose as possible, so a user's main page is the same for all users (/blog). To any logged in user, /blog is home and /blog/newentry is where they create entries.  
   
-Following traditional links works for anyone, logged in or not. Examples are  
-	/blog/entry/(numbers) and blog/(alphanumeric)/all, both of which work the  
-	same regardless if the user is logged in.  
+Following traditional links works for anyone, logged in or not. Examples are /blog/entry/(numbers)and blog/(alphanumeric)/all, both of which work the same regardless of the user is logged in.  
   
-In addition to ensuring a user can only access a entry or comment screen if  
-	logged in, it is re-validated after they submit. This seems reasonable to  
-	me since it's common for users to create multiple accounts. Logging out on  
-	one tab should not result in a post hitting the page under the wrong account.  
+In addition to ensuring a user can only access a entry or comment screen if logged in, it is re-validated after they submit. This seems reasonable to me since it's common for users to create multiple accounts. Logging out on one tab should not result in a post hitting the page under the wrong account.  
   
 I created some re-directs so that user experience should have few surprises.  
   
-Any user messages (outside of those specific to a field), will appear at the top  
-	of the screen.  
+Any user messages (outside of those specific to a field), will appear at the top of the screen.  
   
+
 ### General Notes  
   
 HTML templates were used heavily and I tried to have a single place to change logic  
