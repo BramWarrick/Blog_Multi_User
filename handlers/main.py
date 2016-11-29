@@ -70,10 +70,6 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-# class BoilerPlateHandler(Handler):
-#	 def get(self):
-#		 self.response.write('Hello world!')
-
 
 class MainHandler(Handler):
     def get(self):
@@ -145,6 +141,7 @@ class Entries(db.Model):
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
         return render_str("/blog/entry.html", entry=self)
+
 
 app = webapp2.WSGIApplication([('/', MainHandler),
                                ],
