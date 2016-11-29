@@ -55,7 +55,8 @@ class SignUpHandler(Handler):
         if check_submission(username, password, verify, email):
             self.response.write('Welcome, ' + username + "!")
         else:
-            self.render("minor_hw/sign-up.html", username_error=check_username(username),
+            self.render("minor_hw/sign-up.html",
+                        username_error=check_username(username),
                         password_error=check_password(password),
                         verify_error=check_verify(password, verify),
                         email_error=check_email(email),
@@ -65,7 +66,10 @@ class SignUpHandler(Handler):
 
 
 def check_submission(username, password, verify, email):
-    if check_username(username) == "" and check_password(password) == "" and check_verify(password, verify) == "" and check_email(email) == "":
+    if (check_username(username) == "" and
+       check_password(password) == "" and
+       check_verify(password, verify) == "" and
+       check_email(email) == ""):
         return True
     else:
         return False
@@ -114,6 +118,7 @@ def exists_password(password):
 def matches_password(password, verify):
     return password == verify
 
+
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 PASSWORD_RE = re.compile(r"^.{3,20}$")
 EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
@@ -129,6 +134,7 @@ def valid_password(password):
 
 def valid_email(email):
     return EMAIL_RE.match(email)
+
 
 app = webapp2.WSGIApplication([('/sign-up', SignUpHandler),
                                ],
