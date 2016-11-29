@@ -1,15 +1,19 @@
 ## File format  
 - Instructions  
--High Level Structure  
+- High Level Structure  
 - URI Mapping  
 	- Legend  
 	- Files
 		- Values and Results 
 - HTML File Nesting  
 - Rationale  
+	- Code Separation  
+	- URI (Web Structure)  
+	- General Notes  
   
   
 ## Instructions  
+- Clone the repository to your desired directory:
 `git clone https://github.com/BramWarrick/Bram-FSND-Homework.git`  
 - Add Application to Google App Launcher  
 	- Open Google App Launcher  
@@ -34,11 +38,11 @@ GAE = Google App Engine
 ## URI Mapping
   
 ### Legend
-| Value | Action for user |
-|-------|-----------------|
-| *li*  |logged in users  |  
-| *lo*  |logged out users |
-| *any* |any users        |
+| Value | Action for user  |
+|-------|------------------|
+| *li*  | logged in users  |  
+| *lo*  | logged out users |
+| *any* | any users        |
   
 ### In blog.py file  
 | URI (RegEx)                   | Result                                      |
@@ -52,17 +56,17 @@ GAE = Google App Engine
 | /blog/comment/([0-9]+)/edit   | link to edit comment (*li*); reg page (*lo*)| 
   
 ### In access.py file  
-| URI                           | Result                                    |
-|-------------------------------|-------------------------------------------|
-| /blog/registration            | registration page (*any*)                 |
-| /blog/login                   | login page (*any*)                        |
-| /blog/logout                  | logout page, redirects to reg page (*any*)| 
+| URI                           | Result                                      |
+|-------------------------------|---------------------------------------------|
+| /blog/registration            | registration page (*any*)                   |
+| /blog/login                   | login page (*any*)                          |
+| /blog/logout                  | logout page, redirects to reg page (*any*)  | 
   
   
   
 ## HTML File Nesting  
 
-| File               | Uses files         |
+| File               | Uses files                                            |
 |--------------------|-------------------------------------------------------|
 | base               | base_layout & base_footer                             |
 | base_footer        | n/a                                                   |
@@ -82,7 +86,7 @@ GAE = Google App Engine
   
 ## Rationale  
   
-### Code separation  
+### Code Separation  
   
 The degree of code cluttering the page was a bit much.  
 If I wanted to separate security concerns from regular function,  
@@ -91,14 +95,14 @@ If I wanted to separate security concerns from regular function,
 I feel, in the end, readability is improved.  
   
   
-### URI (Web structure)
+### URI (Web structure)  
   
 I wanted links to be as multipurpose as possible, so a user's main page is  
-	the same for all users (\blog). To any logged in user, /blog is home and  
+	the same for all users (/blog). To any logged in user, /blog is home and  
 	/blog/newentry is where they create entries.  
   
 Following traditional links works for anyone, logged in or not. Examples are  
-	blog/entry/(numbers) and blog/(alphanumeric)/all, both of which work the  
+	/blog/entry/(numbers) and blog/(alphanumeric)/all, both of which work the  
 	same regardless if the user is logged in.  
   
 In addition to ensuring a user can only access a entry or comment screen if  
@@ -110,6 +114,8 @@ I created some re-directs so that user experience should have few surprises.
   
 Any user messages (outside of those specific to a field), will appear at the top  
 	of the screen.  
+  
+### General Notes  
   
 HTML templates were used heavily and I tried to have a single place to change logic  
 	in all the HTML. Once all that was sorted out, changes became easy.  
