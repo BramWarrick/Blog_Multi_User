@@ -32,9 +32,9 @@ index.yaml.................. indexes for GAE
 ## Web directories
 
 ## Legend
-li....logged in users\n
-lo....logged out users\n
-any...any users\n
+li....logged in users
+lo....logged out users
+any...any users
 
 ## Files
 ### In blog.py file
@@ -104,4 +104,3 @@ Any user messages (outside of those specific to a field), will appear at the top
 
 HTML templates were used heavily and I tried to have a single place to change logic
 	in all the HTML. Once all that was sorted out, changes became easy.
-
