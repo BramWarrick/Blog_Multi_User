@@ -41,22 +41,22 @@ GAE = Google App Engine
 | *any* |any users        |
   
 ### In blog.py file  
-| URI (RegEx)                   | Result                                  |
-|-------------------------------|-----------------------------------------|
-| /blog                         | user home (li); registration page (lo)  |  
-| /blog/newentry                | create a new blog entry (li)            |
-| /blog/([a-zA-Z0-9_-]+)/all    | other user's blog (any)                 |
-| /blog/entry/([0-9]+)          | link to specific blog entry (any)       |
-| /blog/entry/([0-9]+)/edit     | link to edit entry (li); reg page (lo)  |
-| /blog/entry/([0-9]+)/rate     | used for post only (li)                 |
-| /blog/comment/([0-9]+)/edit   | link to edit comment (li); reg page (lo)| 
+| URI (RegEx)                   | Result                                      |
+|-------------------------------|---------------------------------------------|
+| /blog                         | user home (*li*); registration page (*lo*)  |  
+| /blog/newentry                | create a new blog entry (*li*)              |
+| /blog/([a-zA-Z0-9_-]+)/all    | other user's blog (*any*)                   |
+| /blog/entry/([0-9]+)          | link to specific blog entry (*any*)         |
+| /blog/entry/([0-9]+)/edit     | link to edit entry (*li*); reg page (*lo*)  |
+| /blog/entry/([0-9]+)/rate     | used for post only (*li*)                   |
+| /blog/comment/([0-9]+)/edit   | link to edit comment (*li*); reg page (*lo*)| 
   
 ### In access.py file  
-| URI                           | Result                                  |
-|-------------------------------|-----------------------------------------|
-| /blog/registration            | registration page (any)                 |
-| /blog/login                   | login page (any)                        |
-| /blog/logout                  | logout page, redirects to reg page (any)| 
+| URI                           | Result                                    |
+|-------------------------------|-------------------------------------------|
+| /blog/registration            | registration page (*any*)                 |
+| /blog/login                   | login page (*any*)                        |
+| /blog/logout                  | logout page, redirects to reg page (*any*)| 
   
   
   
