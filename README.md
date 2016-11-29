@@ -16,7 +16,7 @@ Add Application to Google App Launcher
 	Open Google App Launcher
 	File > Add Existing Application
 	Set "Parent Directory" to directory used for clone
-Run locally on localhost:8080
+Run locally on localhost:[port Google App Engine indicates]
 
 
 ## Files and purpose
