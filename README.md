@@ -1,12 +1,12 @@
 ## File format
-Instructions
-Files and purpose
-Web directories
-	Legend
-	Files
-		Locations and purposes
-HTML file nesting
-Rationale
+- Instructions
+- Files and purpose
+- Web directories
+	- Legend
+	- Files
+		- Locations and purposes
+- HTML file nesting
+- Rationale
 
 
 
