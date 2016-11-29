@@ -210,11 +210,11 @@ class EntrySingleHandler(Handler):
 
         If no entry with that id is found, an error is shown to user.
 
-    Args:
-        entry_id: entry's key id, taken from the URL
-    """
+        Args:
+        	entry_id: entry's key id, taken from the URL
+        """
 
-    # If the enty exists, pull the author and comments for rendering.
+	    # If the enty exists, pull the author and comments for rendering.
         entries, author, comments = Entries.by_id_iterable(entry_id)
         msg = self.get_and_erase_msg_cookie()
 
@@ -247,9 +247,9 @@ class EntrySingleHandler(Handler):
         If no entry with that id is found, an error is shown to user. (Entry
         deleted since comment was started.)
 
-    Args:
-        entry_id: entry's key id, taken from the URL
-    """
+	    Args:
+	        entry_id: entry's key id, taken from the URL
+	    """
         content = self.request.get("content")
         user_curr_id = self.read_secure_cookie('user_id')
         user_curr = Users.by_id(user_curr_id)
@@ -384,14 +384,14 @@ class EntryAdminHandler(Handler):
         If data criteria are not met, reload page with instructive error.
 
         If no entry exists:
-                and criteria are met, a blog entry is added to the Entries table.
+                and criteria are met, blog entry is added to the Entries table.
         If entry exists:
                 validate user logged in is original author
                 and criteria are met, blog entry is updated.
 
-    Args:
-        entry_id: present if entry is being modified.
-    """
+	    Args:
+	        entry_id: present if entry is being modified.
+	    """
         subject = self.request.get("subject")
         content = self.request.get("content")
         user_curr_id = self.read_secure_cookie('user_id')
@@ -448,11 +448,11 @@ def authorized_entry_edit(entry, subject, content):
 
     Entry is the entity to be modified, values are updated.
 
-Args:
-    entry: the entry being modified is passed in
-    subject: author's modified subject
-    content: author's modified blog content (body)
-"""
+	Args:
+	    entry: the entry being modified is passed in
+	    subject: author's modified subject
+	    content: author's modified blog content (body)
+	"""
     entry.subject = subject
     entry.content = content
     entry.put()
@@ -463,11 +463,11 @@ def entry_new_write(subject, content, author_id):
 
     Entry is the entity to be modified, values are updated.
 
-Args:
-    subject: author's modified subject
-    content: author's modified blog content (body)
-    author_id: user_id for the current user; the author
-"""
+	Args:
+	    subject: author's modified subject
+	    content: author's modified blog content (body)
+	    author_id: user_id for the current user; the author
+	"""
     e = Entries.new_entry(author_id, subject, content)
     e.put()
     return str(e.key().id())
@@ -484,9 +484,9 @@ class EntryRateHandler(Handler):
         Redirect's to the blog entry's main page, which will load with comment
                 box if user is signed in; allowing easy access to feedback.
 
-    Args:
-        entry_id: entry_id of the entry being liked or unliked
-    """
+	    Args:
+	        entry_id: entry_id of the entry being liked or unliked
+	    """
         user_curr = self.read_secure_cookie('user_id')
         rate = self.request.get("like")
 
@@ -510,17 +510,17 @@ class EntryRateHandler(Handler):
         Validates user hasn't already voted.
         If no vote exists, writes a new like to the EntryLikes table.
 
-    Args:
-        entry_id: entry_id of the entry being liked
-        user_curr_id: user_id of the logged in user
-    """
+	    Args:
+	        entry_id: entry_id of the entry being liked
+	        user_curr_id: user_id of the logged in user
+	    """
         entry_like = EntryLikes.by_entry_user_id(entry_id, user_curr_id)
 
         if entry_like:
             self.set_msg_cookie("You have previously liked this entry.")
         elif Entries.by_id(entry_id).user_id == user_curr_id:
             self.set_msg_cookie("It is pretty spectaular, isn't it?"
-                                " Unfortunately, you cannot like your own entry.")
+                                "Unfortunately, you can't like your own entry.")
         else:
             e = EntryLikes(entry_id=entry_id,
                            user_id=user_curr_id)
@@ -544,13 +544,13 @@ class CommentEditHandler(Handler):
         to fill in visual cues on the page (e.g. Author name is displayed
         prominently in the upper right.)
 
-    Args:
-        user_curr: user entity for logged in user who is also the author
-        subject: Subject for the blog entry
-        content: content (or body) for the blog entry
-        error: may be used in the event user hasn't met all requirements
-                for a successful write of the new entry.
-    """
+	    Args:
+	        user_curr: user entity for logged in user who is also the author
+	        subject: Subject for the blog entry
+	        content: content (or body) for the blog entry
+	        error: may be used in the event user hasn't met all requirements
+	                for a successful write of the new entry.
+	    """
         msg = self.get_and_erase_msg_cookie()
         self.render("/blog/comment_admin.html",
                     author=user_curr,
@@ -568,9 +568,9 @@ class CommentEditHandler(Handler):
         to fill in visual cues on the page (e.g. Author name is displayed
         prominently in the upper right.)
 
-    Args:
-        entry_id: present if entry is being modified.
-    """
+	    Args:
+	        entry_id: present if entry is being modified.
+	    """
         user_curr_id = self.read_secure_cookie('user_id')
         user_curr = Users.by_id(user_curr_id)
 
@@ -604,14 +604,14 @@ class CommentEditHandler(Handler):
         If data criteria are not met, reload page with instructive error.
 
         If no entry exists:
-                and criteria are met, a blog entry is added to the Entries table.
+                and criteria are met, blog entry is added to the Entries table.
         If entry exists:
                 validate user logged in is original author
                 and criteria are met, blog entry is updated.
 
-    Args:
-        entry_id: present if entry is being modified.
-    """
+	    Args:
+	        entry_id: present if entry is being modified.
+	    """
         content = self.request.get("content")
         user_curr_id = self.read_secure_cookie('user_id')
         user_curr = Users.by_id(user_curr_id)
@@ -669,11 +669,11 @@ def authorized_comment_edit(comment, content):
 
     Entry is the entity to be modified, values are updated.
 
-Args:
-    entry: the entry being modified is passed in
-    subject: author's modified subject
-    content: author's modified blog content (body)
-"""
+	Args:
+	    entry: the entry being modified is passed in
+	    subject: author's modified subject
+	    content: author's modified blog content (body)
+	"""
     comment.content = content
     comment.put()
 
@@ -687,6 +687,7 @@ class MissingHandler(Handler):
 class WelcomeRedirectHandler(Handler):
     def get(self):
         self.redirect('/blog')
+
 
 app = webapp2.WSGIApplication([
     ('/blog', WelcomeHandler),
