@@ -468,7 +468,7 @@ def entry_new_write(subject, content, author_id):
         content: author's modified blog content (body)
         author_id: user_id for the current user; the author
     """
-e = Entries.new_entry(author_id, subject, content)
+    e = Entries.new_entry(author_id, subject, content)
     e.put()
     return str(e.key().id())
 
@@ -519,8 +519,8 @@ class EntryRateHandler(Handler):
         if entry_like:
             self.set_msg_cookie("You have previously liked this entry.")
         elif Entries.by_id(entry_id).user_id == user_curr_id:
-            self.set_msg_cookie("It is pretty spectaular, isn't it?"
-                                "Unfortunately, you can't like your own entry.")
+            self.set_msg_cookie("It is pretty spectaular, isn't it? "
+                                "However, you can't like your own entry.")
         else:
             e = EntryLikes(entry_id=entry_id,
                            user_id=user_curr_id)
