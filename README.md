@@ -11,14 +11,12 @@ Rationale
 
 
 ## Instructions
-git clone https://github.com/BramWarrick/Bram-FSND-Homework.git
-Point Google App Launcher to directory
-	File > Create New Application
+`git clone https://github.com/BramWarrick/Bram-FSND-Homework.git`
+Add Application to Google App Launcher
+	Open Google App Launcher
+	File > Add Existing Application
 	Set "Parent Directory" to directory used for clone
-Run locally
-
-Alternatively, use the web page at bram-fsnd.appspot.com/blog
-
+Run locally on localhost:8080
 
 
 ## Files and purpose
